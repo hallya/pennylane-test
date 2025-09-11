@@ -1,7 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
-import InvoicesList from './components/InvoicesList'
-import InvoiceShow from './components/InvoiceShow'
 import { Dashboard } from '../infrastructure/pages'
 
 function App() {
@@ -10,8 +8,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/dashboard" Component={Dashboard} />
-          <Route path="/invoice/:id" Component={InvoiceShow} />
-          <Route path="/" Component={InvoicesList} />
+          <Route path="/" />
         </Routes>
       </Router>
     </div>

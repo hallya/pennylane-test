@@ -1,4 +1,6 @@
 import { Invoice } from '../../types';
+import { InvoiceEntity } from '../entities';
+import { DSO_DAYS_PERIOD, AT_RISK_DSO_DAYS_THRESHOLD, AT_RISK_OUTSTANDING_EUROS_THRESHOLD } from '../constants';
 
 export interface CashFlowData {
   totalIssued: number;
@@ -10,15 +12,16 @@ export interface CashFlowData {
 
 export class CalculateCashFlow {
   execute(invoices: Invoice[]): CashFlowData {
-    const totalIssued = invoices.reduce((sum, inv) => sum + (parseFloat(inv.total || '0')), 0);
-    const totalReceived = invoices
-      .filter(inv => inv.paid)
-      .reduce((sum, inv) => sum + (parseFloat(inv.total || '0')), 0);
-    const outstandingReceivables = totalIssued - totalReceived;
+    const invoiceEntities = invoices.map(inv => new InvoiceEntity(inv));
 
-    // DSO = (outstanding / total issued) * number of days (assume 30)
-    const dso = totalIssued > 0 ? (outstandingReceivables / totalIssued) * 30 : 0;
-    const isAtRisk = dso > 30 || outstandingReceivables > 10000; // Arbitrary threshold
+    const totalIssued = invoiceEntities.reduce((sum, inv) => sum + inv.getTotalAmount(), 0);
+    const totalReceived = invoiceEntities
+      .filter(inv => inv.paid)
+      .reduce((sum, inv) => sum + inv.getTotalAmount(), 0);
+    const outstandingReceivables = invoiceEntities.reduce((sum, inv) => sum + inv.getOutstandingAmount(), 0);
+
+    const dso = totalIssued > 0 ? (outstandingReceivables / totalIssued) * DSO_DAYS_PERIOD : 0;
+    const isAtRisk = dso > AT_RISK_DSO_DAYS_THRESHOLD || outstandingReceivables > AT_RISK_OUTSTANDING_EUROS_THRESHOLD;
 
     return {
       totalIssued,

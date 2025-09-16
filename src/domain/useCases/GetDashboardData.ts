@@ -20,12 +20,12 @@ export class GetDashboardData {
     private calculateRevenueStructure: CalculateRevenueStructure
   ) {}
 
-  async execute(): Promise<DashboardData> {
+  async execute(days: number = 7): Promise<DashboardData> {
     const invoices = await this.invoiceGateway.getAllInvoices();
 
     return {
       cashFlow: this.calculateCashFlow.execute(invoices),
-      deadlineCompliance: this.calculateDeadlineCompliance.execute(invoices),
+      deadlineCompliance: this.calculateDeadlineCompliance.execute(invoices, days),
       clientReliability: this.calculateClientReliability.execute(invoices),
       revenueStructure: this.calculateRevenueStructure.execute(invoices),
     };

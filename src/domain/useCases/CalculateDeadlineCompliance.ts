@@ -1,25 +1,25 @@
 import { Invoice } from '../../types';
+import { InvoiceEntity } from '../entities';
 
 export interface DeadlineData {
-  dueSoon: Invoice[]; // Next 7, 15, 30 days
-  overdue: Invoice[];
+  dueSoon: InvoiceEntity[]; // Next 7, 15, 30 days
+  overdue: InvoiceEntity[];
 }
 
 export class CalculateDeadlineCompliance {
-  execute(invoices: Invoice[]): DeadlineData {
-    const now = new Date();
-    const dueSoon: Invoice[] = [];
-    const overdue: Invoice[] = [];
+  execute(invoices: Invoice[], days: number = 7): DeadlineData {
+    console.log('CalculateDeadlineCompliance invoices:', invoices);
+    const invoiceEntities = invoices.map(inv => new InvoiceEntity(inv));
+    const dueSoon: InvoiceEntity[] = [];
+    const overdue: InvoiceEntity[] = [];
 
-    invoices.forEach(inv => {
+    invoiceEntities.forEach(inv => {
       if (inv.paid || !inv.deadline) return;
-      const deadline = new Date(inv.deadline);
-      const daysDiff = (deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
 
-      if (daysDiff < 0) {
+      if (inv.isOverdue()) {
         overdue.push(inv);
-      } else if (daysDiff <= 30) {
-        dueSoon.push(inv);
+      } else if (inv.isDueSoon()) {
+          dueSoon.push(inv);
       }
     });
 

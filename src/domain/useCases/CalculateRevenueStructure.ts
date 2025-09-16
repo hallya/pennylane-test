@@ -1,4 +1,5 @@
 import { Invoice } from '../../types';
+import { InvoiceEntity } from '../entities';
 
 export interface RevenueStructureData {
   byClient: { clientId: number; name: string; revenue: number }[];
@@ -12,9 +13,11 @@ export class CalculateRevenueStructure {
     const byProduct: { [key: number]: { label: string; revenue: number } } = {};
     const byVatRate: { [key: string]: number } = {};
 
-    invoices.forEach(inv => {
-      if (!inv.finalized || !inv.total) return;
-      const revenue = parseFloat(inv.total);
+    const invoiceEntities = invoices.map(inv => new InvoiceEntity(inv));
+
+    invoiceEntities.forEach(inv => {
+      if (!inv.finalized) return;
+      const revenue = inv.getTotalAmount();
 
       // By client
       if (inv.customer_id && inv.customer) {

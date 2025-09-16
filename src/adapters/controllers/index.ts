@@ -1,1 +1,1 @@
-export { useDashboard } from './useDashboard';
+export * from './dashboard';

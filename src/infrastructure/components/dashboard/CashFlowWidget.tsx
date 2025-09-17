@@ -32,8 +32,8 @@ export const CashFlowWidget: React.FC<CashFlowWidgetProps> = React.memo(({ data 
 
   return (
     <BaseChartWidget title="Flux de Trésorerie">
-      <div className="flex-grow-1 d-flex align-items-center justify-content-center mb-3">
-        <Bar data={chartData} options={options} height={CHART_CONSTANTS.HEIGHT} width={CHART_CONSTANTS.WIDTH} />
+      <div className="flex-grow-1 mb-3">
+        <Bar data={chartData} options={options} />
       </div>
       {data.isAtRisk && (
         <div className="alert alert-danger mb-2">

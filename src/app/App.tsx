@@ -4,7 +4,7 @@ import { Dashboard } from '../infrastructure/pages'
 
 function App() {
   return (
-    <div className="px-5">
+    <div>
       <Router>
         <Routes>
           <Route path="/dashboard" Component={Dashboard} />

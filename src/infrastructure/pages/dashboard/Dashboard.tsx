@@ -16,17 +16,17 @@ const Dashboard: React.FC = () => {
   return (
     <div className="container-fluid mt-4">
       <h1 className="mb-4">Dashboard Financier</h1>
-      <div className="row g-3">
-        <div className="col-lg-6">
+      <div className="row g-2">
+        <div className="col-12 col-lg-6">
           <CashFlowWidget data={data.cashFlow} />
         </div>
-        <div className="col-lg-6">
+        <div className="col-12 col-lg-6">
           <DeadlineWidget />
         </div>
-        <div className="col-lg-6">
+        <div className="col-12 col-lg-6">
           <ClientReliabilityWidget data={data.clientReliability} />
         </div>
-        <div className="col-lg-6">
+        <div className="col-12 col-lg-6">
           <RevenueStructureWidget data={data.revenueStructure} />
         </div>
       </div>

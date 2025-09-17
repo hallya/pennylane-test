@@ -10,8 +10,10 @@ export const createChartOptions = (
   customOptions?: Partial<ExtendedChartOptions>
 ): ExtendedChartOptions => {
   const baseOptions: ExtendedChartOptions = {
-    responsive: false,
+    responsive: true,
     maintainAspectRatio: false,
+    aspectRatio: 1.5,
+    layout: { padding: 0 },
     plugins: {
       legend: { display: false },
       tooltip: {
@@ -59,6 +61,7 @@ export const createChartOptions = (
       indexAxis: 'y' as const,
     },
     scatter: {
+      aspectRatio: 0.8,
       scales: {
         ...baseOptions.scales,
         x: {
@@ -104,6 +107,7 @@ export const useChartData = (rawData: any[], valueExtractor: (item: any) => numb
 export const CHART_CONSTANTS = {
   HEIGHT: 300,
   WIDTH: 400,
+  DEADLINE_HEIGHT: 350,
   COLORS: CHART_COLOR_PALETTE,
   BORDER_WIDTH: 1,
   FONT_SIZE: 12,

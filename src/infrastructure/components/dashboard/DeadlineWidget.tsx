@@ -107,7 +107,7 @@ export const DeadlineWidget: React.FC = React.memo(() => {
         </div>
       </div>
       <div className="flex-grow-1 d-flex align-items-center justify-content-center">
-        <Scatter data={chartData} options={options} height={chartHeight} width={chartWidth} />
+        <Scatter data={chartData} options={options} height={CHART_CONSTANTS.DEADLINE_HEIGHT} />
       </div>
     </BaseChartWidget>
   )

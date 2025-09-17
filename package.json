@@ -9,7 +9,7 @@
     "test:vitest": "vitest",
     "eject": "react-scripts eject",
     "eject_ts": "./bin/eject_ts",
-    "openapi:gen": "yarn -s typegen src/api/schema.yml > src/api/gen/client.d.ts && yarn openapi:convert",
+    "openapi:gen": "pnpm -s typegen src/api/schema.yml > src/api/gen/client.d.ts && pnpm openapi:convert",
     "openapi:convert": "npx @redocly/openapi-cli bundle ./src/api/schema.yml -o ./src/api/gen/schema.json --format json"
   },
   "dependencies": {
@@ -78,6 +78,6 @@
     "prettier": "3.0.0",
     "react-scripts": "5.0.1",
     "typescript": "4.9.5",
-    "vitest": "2.1.8"
+    "vitest": "3.2.4"
   }
 }

@@ -26,7 +26,7 @@ export const RevenueStructureWidget: React.FC<RevenueStructureWidgetProps> = ({ 
   };
 
   return (
-    <div className="card">
+    <div className="card mh-100 overflow-auto">
       <div className="card-body">
         <h5 className="card-title">Structure du Chiffre d'Affaires</h5>
         <div className="row">

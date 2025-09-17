@@ -6,7 +6,7 @@ interface ClientReliabilityWidgetProps {
 
 export const ClientReliabilityWidget: React.FC<ClientReliabilityWidgetProps> = ({ data }) => {
   return (
-    <div className="card">
+    <div className="card mh-100 overflow-auto">
       <div className="card-body">
         <h5 className="card-title">Fiabilité du Portefeuille Clients</h5>
         <div className="row">

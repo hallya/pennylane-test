@@ -72,7 +72,7 @@ export const DeadlineWidget: React.FC = () => {
   }
 
   return (
-    <div className="card">
+    <div className="card mh-100 overflow-auto">
       <div className="card-body">
         <h5 className="card-title">Respect des Échéances</h5>
         <div className="mb-3">

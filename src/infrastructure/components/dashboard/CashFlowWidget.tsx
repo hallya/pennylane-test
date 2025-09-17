@@ -29,7 +29,7 @@ export const CashFlowWidget: React.FC<CashFlowWidgetProps> = ({ data }) => {
   };
 
   return (
-    <div className="card">
+    <div className="card mh-100 overflow-auto">
       <div className="card-body">
         <h5 className="card-title">Flux de Trésorerie</h5>
         <Bar data={chartData} options={options} />
@@ -38,7 +38,7 @@ export const CashFlowWidget: React.FC<CashFlowWidgetProps> = ({ data }) => {
             ⚠️ Trésorerie en danger : Encours élevé ou DSO {'>'} 30 jours
           </div>
         )}
-        <p>DSO: {data.dso.toFixed(2)} jours</p>
+        <p className="mt-3">DSO: {data.dso.toFixed(2)} jours</p>
       </div>
     </div>
   );

@@ -8,7 +8,6 @@ export interface DeadlineData {
 
 export class CalculateDeadlineCompliance {
   execute(invoices: Invoice[], days: number = 7): DeadlineData {
-    console.log('CalculateDeadlineCompliance invoices:', invoices);
     const invoiceEntities = invoices.map(inv => new InvoiceEntity(inv));
     const dueSoon: InvoiceEntity[] = [];
     const overdue: InvoiceEntity[] = [];

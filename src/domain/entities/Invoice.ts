@@ -1,5 +1,5 @@
 import { Invoice } from '../../types'
-import { AT_RISK_DSO_DAYS_THRESHOLD, AT_RISK_DSO_MILLISECONDS_THRESHOLD } from '../constants'
+import { AT_RISK_DSO_MILLISECONDS_THRESHOLD } from '../constants'
 
 export class InvoiceEntity implements Invoice {
   id: number

@@ -86,10 +86,6 @@ export const DeadlineWidget: React.FC = React.memo(() => {
     },
   })
 
-  // Use standard chart dimensions
-  const chartHeight = CHART_CONSTANTS.HEIGHT
-  const chartWidth = CHART_CONSTANTS.WIDTH
-
   return (
     <BaseChartWidget title="Respect des Échéances">
       <div className="mb-3">

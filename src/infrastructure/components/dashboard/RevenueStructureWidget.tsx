@@ -3,7 +3,7 @@ import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from 'chart.js';
 import { RevenueStructureData } from '../../../domain/useCases';
 import { BaseChartWidget } from './BaseChartWidget';
-import { createChartOptions, CHART_CONSTANTS } from '../../shared/chartConfigFactory';
+import { createChartOptions } from '../../shared/chartConfigFactory';
 import { CHART_COLOR_PALETTE } from '../../shared/chartUtils';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);

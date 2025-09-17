@@ -4,7 +4,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import { CashFlowData } from '../../../domain/useCases';
 import { BaseChartWidget } from './BaseChartWidget';
 import { createChartOptions, CHART_CONSTANTS } from '../../shared/chartConfigFactory';
-import { CHART_COLOR_PALETTE, formatChartValue, formatCurrency } from '../../shared/chartUtils';
+import { CHART_COLOR_PALETTE } from '../../shared/chartUtils';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 

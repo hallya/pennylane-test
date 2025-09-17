@@ -16,7 +16,7 @@ root.render(
   <React.StrictMode>
     <ApiProvider
       url="https://jean-test-api.herokuapp.com/"
-      token={process.env.REACT_APP_JEAN_TEST_API_TOKEN} // set your api token here
+      token={process.env.REACT_APP_JEAN_TEST_API_TOKEN}
     >
       <App />
     </ApiProvider>

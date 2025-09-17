@@ -1,6 +1,10 @@
+import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { CashFlowData } from '../../../domain/useCases';
+import { BaseChartWidget } from './BaseChartWidget';
+import { createChartOptions, CHART_CONSTANTS } from '../../shared/chartConfigFactory';
+import { CHART_COLOR_PALETTE, formatChartValue, formatCurrency } from '../../shared/chartUtils';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -8,38 +12,35 @@ interface CashFlowWidgetProps {
   data: CashFlowData;
 }
 
-export const CashFlowWidget: React.FC<CashFlowWidgetProps> = ({ data }) => {
+export const CashFlowWidget: React.FC<CashFlowWidgetProps> = React.memo(({ data }) => {
+  const values = [data.totalIssued, data.totalReceived, data.outstandingReceivables];
+  const maxValue = Math.max(...values);
+
   const chartData = {
-    labels: ['Total Issued', 'Total Received', 'Outstanding'],
+    labels: ['Émis', 'Reçus', 'Encours'],
     datasets: [
       {
-        label: 'Amount (€)',
-        data: [data.totalIssued, data.totalReceived, data.outstandingReceivables],
-        backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+        data: values,
+        backgroundColor: CHART_COLOR_PALETTE.slice(0, 3),
+        borderColor: CHART_COLOR_PALETTE.slice(0, 3),
+        borderWidth: CHART_CONSTANTS.BORDER_WIDTH,
       },
     ],
   };
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: { position: 'top' as const },
-      title: { display: true, text: 'Cash Flow Overview' },
-    },
-  };
+  const options = createChartOptions('horizontalBar', maxValue);
 
   return (
-    <div className="card mh-100 overflow-auto">
-      <div className="card-body">
-        <h5 className="card-title">Flux de Trésorerie</h5>
-        <Bar data={chartData} options={options} />
-        {data.isAtRisk && (
-          <div className="alert alert-danger mt-3">
-            ⚠️ Trésorerie en danger : Encours élevé ou DSO {'>'} 30 jours
-          </div>
-        )}
-        <p className="mt-3">DSO: {data.dso.toFixed(2)} jours</p>
+    <BaseChartWidget title="Flux de Trésorerie">
+      <div className="flex-grow-1 d-flex align-items-center justify-content-center mb-3">
+        <Bar data={chartData} options={options} height={CHART_CONSTANTS.HEIGHT} width={CHART_CONSTANTS.WIDTH} />
       </div>
-    </div>
+      {data.isAtRisk && (
+        <div className="alert alert-danger mb-2">
+          ⚠️ Trésorerie en danger : Encours élevé ou DSO {'>'} 30 jours
+        </div>
+      )}
+      <p className="mb-0 small">DSO: {data.dso.toFixed(2)} jours</p>
+    </BaseChartWidget>
   );
-};
+});

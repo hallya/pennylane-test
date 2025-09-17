@@ -12,8 +12,8 @@ import {
 import { useDeadlineChartData } from '../hooks/useDeadlineChartData'
 import { useDashboardSearchParams, useDeadlineCompliance } from '../../../adapters/controllers'
 import { BaseChartWidget } from './BaseChartWidget'
-import { createChartOptions, CHART_CONSTANTS } from '../../shared/chartConfigFactory'
-import { formatChartValue, formatCurrency } from '../../shared/chartUtils'
+import { ChartOptionsBuilder, CHART_CONSTANTS } from '../../shared/chartConfigFactory'
+import { formatChartValue, formatDays } from '../../shared/chartUtils'
 
 ChartJS.register(
   CategoryScale,
@@ -32,59 +32,37 @@ export const DeadlineWidget: React.FC = React.memo(() => {
   const selectedDays = deadlineComplianceDays
   const chartData = useDeadlineChartData(data || { dueSoon: [], overdue: [] }, selectedDays)
 
-  const maxValue = chartData.datasets?.[0]?.data ?
-    Math.max(...chartData.datasets[0].data.map((point: { x: number; y: number }) => point.y)) : 0
-
   if (loading) return <div className="text-center mt-3">Chargement des échéances...</div>;
   if (error) return <div className="alert alert-danger">Erreur: {error}</div>;
   if (!data) return <div className="text-center mt-3">Aucune donnée d'échéance</div>;
 
   const handleDaysChange = setDeadlineComplianceDays
 
-  const options = createChartOptions('scatter', maxValue, {
-    plugins: {
-      tooltip: {
-        callbacks: {
-          label: (context) => {
-            const days = context.parsed.x
-            const rtf = new Intl.RelativeTimeFormat('fr', { numeric: 'auto' })
-            const relative = rtf.format(days, 'day')
-            return `${formatCurrency(context.parsed.y)}, ${relative}`
-          },
-        },
-      },
-    },
-    scales: {
-      x: {
-        title: { display: true, text: "Jours depuis aujourd'hui" },
-        suggestedMin: -selectedDays,
-        suggestedMax: selectedDays,
-        ticks: {
-          stepSize: 1,
-          callback: (tickValue) => {
-            if (typeof tickValue === 'number') {
-              return `${tickValue} j`;
-            }
-            return tickValue;
-          },
-        },
-      },
-      y: {
-        title: { display: true, text: 'Montant (€)' },
-        beginAtZero: true,
-        grid: { display: true },
-        ticks: {
-          callback: (tickValue) => {
-            if (typeof tickValue === 'number') {
-              return formatChartValue(tickValue, maxValue);
-            }
-            return tickValue;
-          },
-          font: { size: 14 },
-        },
-      },
-    },
-  })
+  const options = new ChartOptionsBuilder()
+    .forScatter()
+    .responsive(true)
+    .withLegend(false)
+    .withPadding(0)
+    .withXAxis({
+      formatter: formatDays,
+      title: "Jours depuis aujourd'hui",
+      grid: true,
+    })
+    .withYAxis({
+      formatter: formatChartValue,
+      title: 'Montant (€)',
+      grid: true,
+    })
+    .withTooltipFormatter((context: any) => {
+      const days = context.parsed.x;
+      const amount = context.parsed.y;
+      const rtf = new Intl.RelativeTimeFormat('fr', { numeric: 'auto' })
+      const relative = rtf.format(days, 'day')
+      return `${amount.toLocaleString('fr-FR')}€, ${relative}`
+    })
+    .withXAxisRange(-selectedDays, selectedDays)
+    .withXAxisStepSize(selectedDays % 6)
+    .build()
 
   return (
     <BaseChartWidget title="Respect des Échéances">

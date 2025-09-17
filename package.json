@@ -10,7 +10,8 @@
     "eject": "react-scripts eject",
     "eject_ts": "./bin/eject_ts",
     "openapi:gen": "pnpm -s typegen src/api/schema.yml > src/api/gen/client.d.ts && pnpm openapi:convert",
-    "openapi:convert": "npx @redocly/openapi-cli bundle ./src/api/schema.yml -o ./src/api/gen/schema.json --format json"
+    "openapi:convert": "npx @redocly/openapi-cli bundle ./src/api/schema.yml -o ./src/api/gen/schema.json --format json",
+    "prepare": "husky"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "6.4.0",
@@ -44,6 +45,14 @@
       "react-app/jest"
     ]
   },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "npx eslint --fix"
+    ],
+    "*.{test.ts,test.tsx}": [
+      "pnpm test:vitest --run"
+    ]
+  },
   "resolutions": {
     "axios": "0.27.2"
   },
@@ -74,6 +83,9 @@
     "@types/react-dom": "18.2.7",
     "@types/react-router-dom": "5.3.3",
     "@types/react-table": "7.7.14",
+    "eslint": "^8.57.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.6",
     "openapi-client-axios-typegen": "7.3.1",
     "prettier": "3.0.0",
     "react-scripts": "5.0.1",

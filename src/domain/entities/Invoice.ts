@@ -10,7 +10,7 @@ export class InvoiceEntity implements Invoice {
   deadline: string | null
   total: string | null
   tax: string | null
-  invoice_lines: any[] // Simplified
+  invoice_lines: any[]
   customer?: any
 
   constructor(data: Invoice) {
@@ -45,11 +45,13 @@ export class InvoiceEntity implements Invoice {
       return parseFloat(this.total)
     }
 
-    return this.invoice_lines.reduce((sum, line) => {
+    const fromLines = this.invoice_lines.reduce((sum, line) => {
       const price = parseFloat(line.price || '0')
       const quantity = line.quantity || 1
       return sum + price * quantity
     }, 0)
+
+    return fromLines > 0 ? fromLines : parseFloat(this.total || '0')
   }
 
   getOutstandingAmount(): number {

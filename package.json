@@ -7,6 +7,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test:vitest": "vitest",
+    "test:related": "./bin/run-related-tests.js",
     "eject": "react-scripts eject",
     "eject_ts": "./bin/eject_ts",
     "openapi:gen": "pnpm -s typegen src/api/schema.yml > src/api/gen/client.d.ts && pnpm openapi:convert",
@@ -45,14 +46,6 @@
       "react-app/jest"
     ]
   },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "npx eslint --fix"
-    ],
-    "*.{test.ts,test.tsx}": [
-      "pnpm test:vitest --run"
-    ]
-  },
   "resolutions": {
     "axios": "0.27.2"
   },
@@ -89,6 +82,7 @@
     "openapi-client-axios-typegen": "7.3.1",
     "prettier": "3.0.0",
     "react-scripts": "5.0.1",
+    "ts-morph": "^27.0.0",
     "typescript": "4.9.5",
     "vitest": "3.2.4"
   }

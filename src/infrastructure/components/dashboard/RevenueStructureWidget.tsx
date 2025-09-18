@@ -87,11 +87,11 @@ export const RevenueStructureWidget: React.FC<RevenueStructureWidgetProps> =
       <BaseChartWidget title="Structure du Chiffre d'Affaires">
         <div className="row align-items-center">
           <div className="col-md-6">
-            <h6>Par Client (Top 5)</h6>
+            <h3>Par Client (Top 5)</h3>
             <Bar data={clientData} options={clientOptions} />
           </div>
           <div className="col-md-6">
-            <h6>Par Taux de TVA</h6>
+            <h3>Par Taux de TVA</h3>
             <Bar data={vatData} options={vatOptions} />
           </div>
         </div>

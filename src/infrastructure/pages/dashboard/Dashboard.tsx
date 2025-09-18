@@ -21,7 +21,7 @@ const Dashboard: React.FC = () => {
         className="sr-only sr-only-focusable"
         style={{
           position: 'absolute',
-          top: '-40px',
+          top: '-50px',
           left: '6px',
           background: '#000',
           color: '#fff',

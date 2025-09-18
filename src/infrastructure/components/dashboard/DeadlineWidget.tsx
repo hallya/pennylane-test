@@ -72,7 +72,7 @@ export const DeadlineWidget: React.FC<DeadlineWidgetProps> = React.memo(
 
     return (
       <BaseChartWidget title="Respect des Échéances">
-        <div className="mb-3">
+        <div className="mb-0">
           <div className="btn-group" role="group">
             {COUNT_DAYS_RANGE.map((days) => (
               <button

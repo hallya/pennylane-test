@@ -4,14 +4,12 @@ import { Dashboard } from '../infrastructure/pages'
 
 function App() {
   return (
-    <div>
-      <Router>
-        <Routes>
-          <Route path="/dashboard" Component={Dashboard} />
-          <Route path="/" />
-        </Routes>
-      </Router>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/dashboard" Component={Dashboard} />
+        <Route path="/" />
+      </Routes>
+    </Router>
   )
 }
 

@@ -87,7 +87,7 @@ export const BaseChartWidget: React.FC<BaseChartWidgetProps> = ({
     >
       <div className="card-body d-flex flex-column gap-2">
         <h2 id={titleId} className="card-title mb-0">{title}</h2>
-        <div id={contentId} role="region" aria-label={`Contenu du graphique ${title}`}>
+        <div id={contentId} className="d-flex flex-column gap-2" role="region" aria-label={`Contenu du graphique ${title}`}>
           {children}
         </div>
       </div>

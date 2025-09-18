@@ -145,11 +145,11 @@ export const ClientReliabilityWidget: React.FC<ClientReliabilityWidgetProps> = R
       </div>
       <div className="row flex-grow-1">
         <div className="col-md-6">
-          <h6 className="mb-0">Clients avec gros encours</h6>
+          <h3 className="mb-0">Clients avec gros encours</h3>
           <Bar data={outstandingData} options={outstandingOptions} />
         </div>
         <div className="col-md-6">
-          <h6 className="mb-0">Clients payant en retard</h6>
+          <h3 className="mb-0">Clients payant en retard</h3>
           <Bar data={lateData} options={lateOptions} />
         </div>
       </div>

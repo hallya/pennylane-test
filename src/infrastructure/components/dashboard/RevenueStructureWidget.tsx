@@ -31,7 +31,7 @@ export const RevenueStructureWidget: React.FC<RevenueStructureWidgetProps> =
     )
 
     const clientLabels = data.byClient.slice(0, 5).map((c) => c.name)
-    console.log('RevenueStructureWidget - Client labels:', clientLabels)
+
     const clientData = {
       labels: clientLabels,
       datasets: [

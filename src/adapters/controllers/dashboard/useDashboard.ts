@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useApi } from '../../../api'
 import { InvoiceGatewayImpl } from '../../gateways'
 import {
@@ -16,10 +16,13 @@ export const useDashboard = () => {
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const hasFetchedRef = useRef(false);
   const { deadlineComplianceDays } = useDashboardSearchParams()
 
   const fetchDashboardData = useCallback(
     async (days: number) => {
+      if (hasFetchedRef.current) return;
+      hasFetchedRef.current = true;
       try {
         setLoading(true)
         const gateway = new InvoiceGatewayImpl(api)
@@ -34,6 +37,7 @@ export const useDashboard = () => {
         setData(result)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error')
+        hasFetchedRef.current = false;
       } finally {
         setLoading(false)
       }
@@ -44,7 +48,7 @@ export const useDashboard = () => {
   useEffect(() => {
     fetchDashboardData(deadlineComplianceDays);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [fetchDashboardData, deadlineComplianceDays])
 
   return { data, loading, error }
 }

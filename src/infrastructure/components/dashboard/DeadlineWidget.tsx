@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import { Scatter } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -10,10 +10,14 @@ import {
   Legend,
 } from 'chart.js'
 import { useDeadlineChartData } from '../hooks/useDeadlineChartData'
-import { useDashboardSearchParams, useDeadlineCompliance } from '../../../adapters/controllers'
+import { useDashboardSearchParams } from '../../../adapters/controllers'
 import { BaseChartWidget } from './BaseChartWidget'
-import { ChartOptionsBuilder, CHART_CONSTANTS } from '../../shared/chartConfigFactory'
+import {
+  ChartOptionsBuilder,
+  CHART_CONSTANTS,
+} from '../../shared/chartConfigFactory'
 import { formatChartValue, formatDays } from '../../shared/chartUtils'
+import { DeadlineData } from '../../../domain/useCases'
 
 ChartJS.register(
   CategoryScale,
@@ -26,63 +30,74 @@ ChartJS.register(
 
 const COUNT_DAYS_RANGE = [7, 15, 30]
 
-export const DeadlineWidget: React.FC = React.memo(() => {
-  const { deadlineComplianceDays, setDeadlineComplianceDays } = useDashboardSearchParams()
-  const { data, loading, error } = useDeadlineCompliance()
-  const selectedDays = deadlineComplianceDays
-  const chartData = useDeadlineChartData(data || { dueSoon: [], overdue: [] }, selectedDays)
+interface DeadlineWidgetProps {
+  data: DeadlineData
+}
 
-  if (loading) return <div className="text-center mt-3">Chargement des échéances...</div>;
-  if (error) return <div className="alert alert-danger">Erreur: {error}</div>;
-  if (!data) return <div className="text-center mt-3">Aucune donnée d'échéance</div>;
+export const DeadlineWidget: React.FC<DeadlineWidgetProps> = React.memo(
+  (props: DeadlineWidgetProps) => {
+    const { deadlineComplianceDays, setDeadlineComplianceDays } =
+      useDashboardSearchParams()
+    const { data } = props;
+    const selectedDays = deadlineComplianceDays
+    const chartData = useDeadlineChartData(data, selectedDays)
 
-  const handleDaysChange = setDeadlineComplianceDays
+    const handleDaysChange = setDeadlineComplianceDays
 
-  const options = new ChartOptionsBuilder()
-    .forScatter()
-    .responsive(true)
-    .withLegend(false)
-    .withPadding(0)
-    .withXAxis({
-      formatter: formatDays,
-      title: "Jours depuis aujourd'hui",
-      grid: true,
-    })
-    .withYAxis({
-      formatter: formatChartValue,
-      title: 'Montant (€)',
-      grid: true,
-    })
-    .withTooltipFormatter((context: any) => {
-      const days = context.parsed.x;
-      const amount = context.parsed.y;
-      const rtf = new Intl.RelativeTimeFormat('fr', { numeric: 'auto' })
-      const relative = rtf.format(days, 'day')
-      return `${amount.toLocaleString('fr-FR')}€, ${relative}`
-    })
-    .withXAxisRange(-selectedDays, selectedDays)
-    .withXAxisStepSize(selectedDays % 6)
-    .build()
+    const options = new ChartOptionsBuilder()
+      .forScatter()
+      .responsive(true)
+      .withLegend(false)
+      .withPadding(0)
+      .withXAxis({
+        formatter: formatDays,
+        title: "Jours depuis aujourd'hui",
+        grid: true,
+      })
+      .withYAxis({
+        formatter: formatChartValue,
+        title: 'Montant (€)',
+        grid: true,
+      })
+      .withTooltipFormatter((context: any) => {
+        const days = context.parsed.x
+        const amount = context.parsed.y
+        const rtf = new Intl.RelativeTimeFormat('fr', { numeric: 'auto' })
+        const relative = rtf.format(days, 'day')
+        return `${amount.toLocaleString('fr-FR')}€, ${relative}`
+      })
+      .withXAxisRange(-selectedDays, selectedDays)
+      .withXAxisStepSize(selectedDays % 6)
+      .build()
 
-  return (
-    <BaseChartWidget title="Respect des Échéances">
-      <div className="mb-3">
-        <div className="btn-group" role="group">
-          {COUNT_DAYS_RANGE.map((days) => (
-            <button
-              key={days}
-              type="button"
-              className={selectedDays === days ? 'btn btn-primary' : 'btn btn-outline-primary'}
-              onClick={() => handleDaysChange(days)}
-            >
-              {days} jours
-            </button>
-          ))}
+    return (
+      <BaseChartWidget title="Respect des Échéances">
+        <div className="mb-3">
+          <div className="btn-group" role="group">
+            {COUNT_DAYS_RANGE.map((days) => (
+              <button
+                key={days}
+                type="button"
+                className={
+                  selectedDays === days
+                    ? 'btn btn-primary'
+                    : 'btn btn-outline-primary'
+                }
+                onClick={() => handleDaysChange(days)}
+              >
+                {days} jours
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
-      <div className="flex-grow-1 d-flex align-items-center justify-content-center">
-        <Scatter data={chartData} options={options} height={CHART_CONSTANTS.DEADLINE_HEIGHT} />
-      </div>
-    </BaseChartWidget>
-  )
-})
+        <div className="flex-grow-1 d-flex align-items-center justify-content-center">
+          <Scatter
+            data={chartData}
+            options={options}
+            height={CHART_CONSTANTS.DEADLINE_HEIGHT}
+          />
+        </div>
+      </BaseChartWidget>
+    )
+  }
+)

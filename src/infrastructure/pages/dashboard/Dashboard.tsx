@@ -31,7 +31,7 @@ const Dashboard: React.FC = () => {
         <div className="col-12 col-lg-7">
           <div className="row g-2">
             <div className="col-12">
-              <DeadlineWidget />
+              <DeadlineWidget data={data.deadlineCompliance} />
             </div>
             <div className="col-12">
               <ClientReliabilityWidget data={data.clientReliability} />

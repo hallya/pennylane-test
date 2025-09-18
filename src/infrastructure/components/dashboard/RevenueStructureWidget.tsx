@@ -10,7 +10,10 @@ import {
 } from 'chart.js'
 import { RevenueStructureData } from '../../../domain/useCases'
 import { BaseChartWidget } from './BaseChartWidget'
-import { ChartOptionsBuilder, useChartData } from '../../shared/chartConfigFactory'
+import {
+  ChartOptionsBuilder,
+  useChartData,
+} from '../../shared/chartConfigFactory'
 import { CHART_COLOR_PALETTE } from '../../shared/chartUtils'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend)
@@ -63,7 +66,7 @@ export const RevenueStructureWidget: React.FC<RevenueStructureWidgetProps> =
       .withPadding(0)
       .withCurrencyFormatting()
       .withTooltipFormatter((context: any) => {
-        const value = context.parsed.x;
+        const value = context.parsed.x
         return `${context.label}: ${value.toLocaleString('fr-FR')}€`
       })
       .build()
@@ -75,7 +78,7 @@ export const RevenueStructureWidget: React.FC<RevenueStructureWidgetProps> =
       .withPadding(0)
       .withCurrencyFormatting()
       .withTooltipFormatter((context: any) => {
-        const value = context.parsed.x;
+        const value = context.parsed.x
         return `${context.label}: ${value.toLocaleString('fr-FR')}€`
       })
       .build()

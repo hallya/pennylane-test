@@ -74,7 +74,7 @@ export const CashFlowWidget: React.FC<CashFlowWidgetProps> = React.memo(
           />
         </div>
         {data.isAtRisk && (
-          <div className="alert alert-danger mb-2">
+          <div className="alert alert-danger mb-2 p-2">
             ⚠️ Trésorerie en danger : Encours élevé ou DSO {'>'} 30 jours
           </div>
         )}

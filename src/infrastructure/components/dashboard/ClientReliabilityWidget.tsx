@@ -104,7 +104,7 @@ export const ClientReliabilityWidget: React.FC<ClientReliabilityWidgetProps> = R
 
   return (
     <BaseChartWidget title="Fiabilité du Portefeuille Clients">
-      <div className="mb-3">
+      <div>
         <div className="row text-center">
           <div className="col-4">
             <div className="fw-bold">{totalLatePayers}</div>
@@ -121,11 +121,11 @@ export const ClientReliabilityWidget: React.FC<ClientReliabilityWidgetProps> = R
         </div>
       </div>
       {isAtRisk && (
-        <div className="alert alert-danger mb-2 p-2">
+        <div className="alert alert-danger mb-0 p-2">
           ⚠️ Portefeuille à risque : Nombre élevé de clients en retard ou encours important
         </div>
       )}
-      <div className="mb-3">
+      <div>
         <div className="btn-group" role="group">
           <button
             type="button"
@@ -143,14 +143,14 @@ export const ClientReliabilityWidget: React.FC<ClientReliabilityWidgetProps> = R
           </button>
         </div>
       </div>
-      <div className="row align-items-center">
+      <div className="row flex-grow-1">
         <div className="col-md-6">
-          <h6>Clients payant en retard</h6>
-          <Bar data={lateData} options={lateOptions} />
+          <h6 className="mb-0">Clients avec gros encours</h6>
+          <Bar data={outstandingData} options={outstandingOptions} />
         </div>
         <div className="col-md-6">
-          <h6>Clients avec gros encours</h6>
-          <Bar data={outstandingData} options={outstandingOptions} />
+          <h6 className="mb-0">Clients payant en retard</h6>
+          <Bar data={lateData} options={lateOptions} />
         </div>
       </div>
     </BaseChartWidget>

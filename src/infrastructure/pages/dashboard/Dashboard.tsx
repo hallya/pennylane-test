@@ -15,26 +15,26 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="container-fluid mt-4">
-      <h1 className="mb-4">Dashboard Financier</h1>
+      <h1 className="mb-3">Dashboard Financier</h1>
       <div className="row g-2">
-        <div className="col-12 col-lg-5">
-          <div className="row g-2">
-            <div className="col-12">
+        <div className="col-12 col-lg-6">
+          <div className="d-flex flex-column h-100 gap-3">
+            <div className="flex-grow-0">
               <CashFlowWidget data={data.cashFlow} />
             </div>
-            <div className="col-12">
-              <RevenueStructureWidget data={data.revenueStructure} />
+            <div className="flex-grow-1">
+              <ClientReliabilityWidget data={data.clientReliability} />
             </div>
           </div>
         </div>
 
-        <div className="col-12 col-lg-7">
-          <div className="row g-2">
-            <div className="col-12">
+        <div className="col-12 col-lg-6">
+          <div className="d-flex flex-column h-100 gap-3">
+            <div className="flex-grow-1">
               <DeadlineWidget data={data.deadlineCompliance} />
             </div>
-            <div className="col-12">
-              <ClientReliabilityWidget data={data.clientReliability} />
+            <div className="flex-grow-0">
+              <RevenueStructureWidget data={data.revenueStructure} />
             </div>
           </div>
         </div>

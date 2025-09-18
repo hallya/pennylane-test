@@ -54,9 +54,9 @@ export const BaseChartWidget: React.FC<BaseChartWidgetProps> = ({
   }
 
   return (
-    <div className={`card h-100 ${className}`}>
-      <div className="card-body d-flex flex-column">
-        <h5 className="card-title">{title}</h5>
+    <div className={`card ${className}`}>
+      <div className="card-body d-flex flex-column gap-2">
+        <h5 className="card-title mb-0">{title}</h5>
         {children}
       </div>
     </div>

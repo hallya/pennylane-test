@@ -21,3 +21,7 @@ vi.mock('react-chartjs-2', () => ({
     />
   ),
 }))
+
+vi.mock('../../../../api', () => ({
+  useApi: vi.fn(() => ({})),
+}))

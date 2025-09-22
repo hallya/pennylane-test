@@ -10,12 +10,21 @@ import { formatCurrency } from '../../shared/chartUtils'
 
 interface InvoicesTableProps {
   data: InvoiceEntity[]
+  onDelete?: (id: number) => void | Promise<void>
 }
 
-const InvoicesTable: React.FC<InvoicesTableProps> = ({ data }) => {
+const InvoicesTable: React.FC<InvoicesTableProps> = ({ data, onDelete }) => {
   const formatDate = (dateString: string | null) => {
     if (!dateString) return '-'
     return new Date(dateString).toLocaleDateString('fr-FR')
+  }
+
+  const handleDelete = async (id: number) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette facture ?')) {
+      if (onDelete) {
+        await onDelete(id)
+      }
+    }
   }
 
   return (
@@ -101,7 +110,20 @@ const InvoicesTable: React.FC<InvoicesTableProps> = ({ data }) => {
                     ? formatCurrency(invoice.getTotalAmount())
                     : '-'}
                 </td>
-                <td>#{invoice.id}</td>
+                <td>
+                  <div className="d-flex align-items-center">
+                    <span>#{invoice.id}</span>
+                    {onDelete && (
+                      <button
+                        className="btn btn-sm btn-outline-danger ms-2"
+                        onClick={() => handleDelete(invoice.id)}
+                        title="Supprimer la facture"
+                      >
+                        <i className="bi bi-trash"></i>
+                      </button>
+                    )}
+                  </div>
+                </td>
               </tr>
             )
           })}

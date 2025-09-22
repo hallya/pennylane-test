@@ -17,4 +17,8 @@ export class InvoiceGatewayImpl implements InvoiceGateway {
     const { data } = await this.api.postInvoices(null, { invoice: payload });
     return data;
   }
+
+  async deleteInvoice(id: number): Promise<void> {
+    await this.api.deleteInvoice(id);
+  }
 }

@@ -3,6 +3,8 @@ import { useApi } from '../../../api'
 import { InvoiceGatewayImpl } from '../../gateways'
 import { InvoiceEntity } from '../../../domain/entities'
 import { Pagination } from '../../../infrastructure/api/types'
+import { useToast } from '../../../infrastructure/components/hooks/useToast'
+import { AxiosError } from 'openapi-client-axios'
 
 interface UseInvoicesParams {
   page?: number
@@ -22,6 +24,7 @@ export const useInvoices = ({
   perPage = 25,
 }: UseInvoicesParams = {}): UseInvoicesReturn => {
   const api = useApi()
+  const { showToast } = useToast()
   const [data, setData] = useState<InvoiceEntity[] | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -46,7 +49,12 @@ export const useInvoices = ({
       setData(invoiceEntities)
       setPagination(result.pagination)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error')
+      const errorMessage =
+        err instanceof AxiosError ? err?.response?.data.message : null
+      if (errorMessage) {
+        setError(errorMessage)
+        showToast(errorMessage, 'error')
+      }
     } finally {
       setLoading(false)
       hasFetched.current = false

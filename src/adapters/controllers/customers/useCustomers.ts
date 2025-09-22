@@ -3,9 +3,12 @@ import { useApi } from '../../../api'
 import { CustomerGatewayImpl } from '../../gateways'
 import { Components } from '../../../api/gen/client'
 import { SearchCustomersUseCaseImpl } from '../../../domain/useCases'
+import { useToast } from '../../../infrastructure/components/hooks/useToast'
+import { AxiosError } from 'openapi-client-axios'
 
 export const useSearchCustomers = () => {
   const api = useApi()
+  const { showToast } = useToast()
   const [customers, setCustomers] = useState<Components.Schemas.Customer[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -25,8 +28,12 @@ export const useSearchCustomers = () => {
       const results = await searchCustomersUseCase.execute(query)
       setCustomers(results)
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erreur lors de la recherche'
-      setError(errorMessage)
+      const errorMessage =
+        err instanceof AxiosError ? err?.response?.data.message : null
+      if (errorMessage) {
+        setError(errorMessage)
+        showToast(errorMessage, 'error')
+      }
       setCustomers([])
     } finally {
       setLoading(false)

@@ -9,9 +9,12 @@ import {
   CalculateRevenueStructure,
   DashboardData,
 } from '../../../domain/useCases'
+import { useToast } from '../../../infrastructure/components/hooks/useToast'
+import { AxiosError } from 'openapi-client-axios'
 
 export const useDashboard = () => {
   const api = useApi()
+  const { showToast } = useToast()
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -34,7 +37,12 @@ export const useDashboard = () => {
         const result = await useCase.execute()
         setData(result)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error')
+        const errorMessage =
+          err instanceof AxiosError ? err?.response?.data.message : null
+        if (errorMessage) {
+          setError(errorMessage)
+          showToast(errorMessage, 'error')
+        }
         hasFetchedRef.current = false;
       } finally {
         setLoading(false)

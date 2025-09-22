@@ -124,4 +124,27 @@ describe('InvoicesTable', () => {
 
     expect(screen.getByText('Statut')).toBeInTheDocument()
   })
+
+  it('renders delete button when onDelete prop is provided', () => {
+    const mockOnDelete = vi.fn()
+    render(<InvoicesTable data={mockInvoices} onDelete={mockOnDelete} />)
+
+    expect(screen.getByText('#1')).toBeInTheDocument()
+    expect(screen.getByText('#2')).toBeInTheDocument()
+    expect(screen.getByText('#3')).toBeInTheDocument()
+
+    const deleteButtons = screen.getAllByRole('button', { name: /supprimer/i })
+    expect(deleteButtons).toHaveLength(3)
+  })
+
+  it('does not render delete button when onDelete prop is not provided', () => {
+    render(<InvoicesTable data={mockInvoices} />)
+
+    expect(screen.getByText('#1')).toBeInTheDocument()
+    expect(screen.getByText('#2')).toBeInTheDocument()
+    expect(screen.getByText('#3')).toBeInTheDocument()
+
+    const deleteButtons = screen.queryAllByRole('button', { name: /supprimer/i })
+    expect(deleteButtons).toHaveLength(0)
+  })
 })

@@ -6,6 +6,11 @@ import { useInvoices } from '../../../../adapters/controllers'
 
 vi.mock('../../../../adapters/controllers', () => ({
   useInvoices: vi.fn(),
+  useDeleteInvoice: () => ({
+    deleteInvoice: vi.fn(),
+    loading: false,
+    error: null,
+  }),
 }))
 
 vi.mock('../../components', () => ({

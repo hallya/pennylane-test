@@ -1,15 +1,25 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from 'react-bootstrap'
-import { useInvoices } from '../../../adapters/controllers'
+import { useInvoices, useDeleteInvoice } from '../../../adapters/controllers'
 import { InvoicesTable, InvoicesPagination } from '../../components'
 
 const Invoices: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
-  const { data, loading, error, pagination } = useInvoices({
+  const { data, loading, error, pagination, refetch } = useInvoices({
     page: currentPage,
     perPage: 50,
   })
+  const { deleteInvoice } = useDeleteInvoice()
+
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteInvoice(id)
+      refetch()
+    } catch (error) {
+      // Error is handled in the hook
+    }
+  }
 
   if (loading) {
     return (
@@ -72,7 +82,7 @@ const Invoices: React.FC = () => {
           </Link>
         </header>
 
-        <InvoicesTable data={data} />
+        <InvoicesTable data={data} onDelete={handleDelete} />
 
         <InvoicesPagination
           currentPage={currentPage}

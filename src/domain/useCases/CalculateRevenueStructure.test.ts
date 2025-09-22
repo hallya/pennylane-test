@@ -37,16 +37,14 @@ describe('CalculateRevenueStructure', () => {
         finalized: true,
         customer_id: CUSTOMER_1.id,
         customer: CUSTOMER_1,
-        total: '1000.00',
-        invoice_lines: []
+        total: '1000.00'
       }),
       InvoiceTestDataFactory.create({
         id: 2,
         finalized: true,
         customer_id: CUSTOMER_1.id,
         customer: CUSTOMER_1,
-        total: '2000.00',
-        invoice_lines: []
+        total: '2000.00'
       }),
     ];
     const result = useCase.execute(invoices);

@@ -1,49 +1,77 @@
-import { faker } from '@faker-js/faker';
-import { Invoice } from '../../../types';
+import { faker } from '@faker-js/faker'
+import { Invoice } from '../../../types'
 
-// Set seed for reproducible tests
-faker.seed(123);
+faker.seed(123)
 
 export class InvoiceTestDataFactory {
   static create(overrides: Partial<Invoice> = {}): Invoice {
+    const id = overrides.id || faker.number.int({ min: 1, max: 1000 })
+    const total = overrides.total || faker.finance.amount()
+    const tax = overrides.tax || faker.finance.amount()
+    const subtotal = (parseFloat(total) - parseFloat(tax)).toFixed(2)
+
     return {
-      id: faker.number.int({ min: 1, max: 1000 }),
+      id,
       customer_id: faker.number.int({ min: 1, max: 100 }),
-      finalized: true, // Default to true for most tests
-      paid: false, // Default to false
+      finalized: true,
+      paid: false,
       date: faker.date.past().toISOString().split('T')[0],
       deadline: faker.date.future().toISOString().split('T')[0],
-      total: faker.finance.amount(),
-      tax: faker.finance.amount(),
-      invoice_lines: [],
+      total,
+      tax,
+      invoice_lines: overrides.invoice_lines || [
+        {
+          id: faker.number.int({ min: 1, max: 1000 }),
+          invoice_id: id,
+          product_id: faker.number.int({ min: 1, max: 100 }),
+          quantity: 1,
+          label: faker.commerce.productName(),
+          unit: faker.helpers.arrayElement(['hour', 'day', 'piece']),
+          vat_rate: faker.helpers.arrayElement(['0', '5.5', '10', '20']),
+          price: total,
+          tax,
+          product: {
+            id: faker.number.int({ min: 1, max: 1000 }),
+            label: faker.commerce.productName(),
+            vat_rate: faker.helpers.arrayElement(['0', '5.5', '10', '20']),
+            unit: faker.helpers.arrayElement(['hour', 'day', 'piece']),
+            unit_price: total,
+            unit_price_without_tax: (parseFloat(total) - parseFloat(tax)).toFixed(2),
+            unit_tax: tax,
+          },
+        },
+      ],
       ...overrides,
-    };
+    }
   }
 
   static paid(overrides: Partial<Invoice> = {}): Invoice {
-    return this.create({ paid: true, ...overrides });
+    return this.create({ paid: true, ...overrides })
   }
 
   static unpaid(overrides: Partial<Invoice> = {}): Invoice {
-    return this.create({ paid: false, ...overrides });
+    return this.create({ paid: false, ...overrides })
   }
 
   static overdue(overrides: Partial<Invoice> = {}): Invoice {
-    const pastDate = faker.date.past({ years: 1 }).toISOString().split('T')[0];
-    return this.create({ deadline: pastDate, ...overrides });
+    const pastDate = faker.date.past({ years: 1 }).toISOString().split('T')[0]
+    return this.create({ deadline: pastDate, ...overrides })
   }
 
   static dueSoon(overrides: Partial<Invoice> = {}): Invoice {
-    const futureDate = faker.date.soon({ days: 15 }).toISOString().split('T')[0];
-    return this.create({ deadline: futureDate, ...overrides });
+    const futureDate = faker.date.soon({ days: 15 }).toISOString().split('T')[0]
+    return this.create({ deadline: futureDate, ...overrides })
   }
 
   static future(overrides: Partial<Invoice> = {}): Invoice {
-    const futureDate = faker.date.future({ years: 1 }).toISOString().split('T')[0];
-    return this.create({ deadline: futureDate, ...overrides });
+    const futureDate = faker.date
+      .future({ years: 1 })
+      .toISOString()
+      .split('T')[0]
+    return this.create({ deadline: futureDate, ...overrides })
   }
 
   static withoutDeadline(overrides: Partial<Invoice> = {}): Invoice {
-    return this.create({ deadline: null, ...overrides });
+    return this.create({ deadline: null, ...overrides })
   }
 }

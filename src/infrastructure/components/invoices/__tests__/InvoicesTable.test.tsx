@@ -180,8 +180,8 @@ describe('InvoicesTable', () => {
       render(<InvoicesTable data={mockInvoices} />)
 
       expect(screen.getByText('Payée')).toBeInTheDocument()
-      expect(screen.getByText('En retard')).toBeInTheDocument()
-      expect(screen.getByText('Brouillon')).toBeInTheDocument()
+      expect(screen.getByText('En retard de paiement')).toBeInTheDocument()
+      expect(screen.getByText('À finaliser')).toBeInTheDocument()
 
       expect(screen.getAllByText('En attente de paiement')).toHaveLength(2)
     })
@@ -195,8 +195,8 @@ describe('InvoicesTable', () => {
           (cell) =>
             cell.textContent === 'Payée' ||
             cell.textContent === 'Échéance proche' ||
-            cell.textContent === 'En retard' ||
-            cell.textContent === 'Brouillon' ||
+            cell.textContent === 'En retard de paiement' ||
+            cell.textContent === 'À finaliser' ||
             cell.textContent === 'En attente de paiement'
         )
 

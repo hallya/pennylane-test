@@ -20,10 +20,10 @@ export const INVOICE_STATUS = {
 } as const;
 
 export const INVOICE_STATUS_LABELS = {
-  [INVOICE_STATUS.DRAFT]: 'Brouillon',
+  [INVOICE_STATUS.DRAFT]: 'À finaliser',
   [INVOICE_STATUS.FINALIZED_UNPAID]: 'En attente de paiement',
   [INVOICE_STATUS.PAID]: 'Payée',
-  [INVOICE_STATUS.OVERDUE]: 'En retard',
+  [INVOICE_STATUS.OVERDUE]: 'En retard de paiement',
   [INVOICE_STATUS.DUE_SOON]: 'Échéance proche'
 } as const;
 

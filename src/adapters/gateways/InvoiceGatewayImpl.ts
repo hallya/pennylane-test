@@ -13,6 +13,21 @@ export class InvoiceGatewayImpl implements InvoiceGateway {
     return data;
   }
 
+  async getFinalizedInvoices(page?: number, perPage?: number): Promise<PaginatedInvoices> {
+    const params: any = {};
+    if (page !== undefined) params.page = page;
+    if (perPage !== undefined) params.per_page = perPage;
+
+    params.filter = JSON.stringify([{
+      field: 'finalized',
+      operator: 'eq',
+      value: true
+    }]);
+
+    const { data } = await this.api.getInvoices(params);
+    return data;
+  }
+
   async getInvoice(id: number): Promise<Invoice> {
     const { data } = await this.api.getInvoice(id);
     return data;

@@ -21,7 +21,7 @@ export class GetDashboardData {
   ) {}
 
   async execute(): Promise<DashboardData> {
-    const result = await this.invoiceGateway.getAllInvoices(1, 50);
+    const result = await this.invoiceGateway.getFinalizedInvoices(1, 50);
     const invoices = result.invoices;
 
     return {

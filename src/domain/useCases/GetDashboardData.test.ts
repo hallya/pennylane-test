@@ -9,6 +9,7 @@ import { InvoiceTestDataFactory } from '../__tests__/utils/invoiceTestDataFactor
 
 const mockInvoiceGateway: Mocked<InvoiceGateway> = {
   getAllInvoices: vi.fn(),
+  getFinalizedInvoices: vi.fn(),
   getInvoice: vi.fn(),
   createInvoice: vi.fn(),
   updateInvoice: vi.fn(),
@@ -63,7 +64,7 @@ describe('GetDashboardData', () => {
   beforeEach(() => {
     vi.clearAllMocks()
 
-    mockInvoiceGateway.getAllInvoices.mockResolvedValue(mockPaginatedInvoices)
+    mockInvoiceGateway.getFinalizedInvoices.mockResolvedValue(mockPaginatedInvoices)
     mockCalculateCashFlow.execute.mockReturnValue(mockCashFlowData)
     mockCalculateDeadlineCompliance.execute.mockReturnValue(mockDeadlineData)
     mockCalculateClientReliability.execute.mockReturnValue(
@@ -82,9 +83,9 @@ describe('GetDashboardData', () => {
     )
   })
 
-  it('should call getAllInvoices on the gateway', async () => {
+  it('should call getFinalizedInvoices on the gateway', async () => {
     await useCase.execute()
-    expect(mockInvoiceGateway.getAllInvoices).toHaveBeenCalledTimes(1)
+    expect(mockInvoiceGateway.getFinalizedInvoices).toHaveBeenCalledTimes(1)
   })
 
   it('should call all calculate use cases with the invoices', async () => {
@@ -113,11 +114,11 @@ describe('GetDashboardData', () => {
 
 
   it('should handle gateway errors', async () => {
-    const error = new Error('Gateway error')
-    mockInvoiceGateway.getAllInvoices.mockRejectedValue(error)
+   const error = new Error('Gateway error')
+   mockInvoiceGateway.getFinalizedInvoices.mockRejectedValue(error)
 
-    await expect(useCase.execute()).rejects.toThrow('Gateway error')
-  })
+   await expect(useCase.execute()).rejects.toThrow('Gateway error')
+ })
 
   it('should handle calculation errors', async () => {
     const error = new Error('Calculation error')
@@ -131,7 +132,7 @@ describe('GetDashboardData', () => {
   it('should call use cases in correct order', async () => {
     const callOrder: string[] = []
 
-    mockInvoiceGateway.getAllInvoices.mockImplementation(async () => {
+    mockInvoiceGateway.getFinalizedInvoices.mockImplementation(async () => {
       callOrder.push('gateway')
       return mockPaginatedInvoices
     })

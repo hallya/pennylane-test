@@ -21,6 +21,7 @@ const InvoicesTable: React.FC<InvoicesTableProps> = ({ data }) => {
   return (
     <div
       className="table-responsive"
+      data-testid="invoices-table-wrapper"
       style={{
         maxHeight: '75vh',
         overflowY: 'auto',

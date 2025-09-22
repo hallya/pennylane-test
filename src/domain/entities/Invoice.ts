@@ -1,4 +1,4 @@
-import { Invoice } from '../../types'
+import { Invoice, InvoiceLine, Customer } from '../../types'
 import { AT_RISK_DSO_MILLISECONDS_THRESHOLD } from '../constants'
 
 export class InvoiceEntity implements Invoice {
@@ -10,8 +10,8 @@ export class InvoiceEntity implements Invoice {
   deadline: string | null
   total: string | null
   tax: string | null
-  invoice_lines: any[]
-  customer?: any
+  invoice_lines: InvoiceLine[]
+  customer?: Customer
 
   constructor(data: Invoice) {
     this.id = data.id

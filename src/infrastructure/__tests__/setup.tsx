@@ -8,6 +8,9 @@ vi.mock('chart.js', () => ({
   CategoryScale: vi.fn(),
   LinearScale: vi.fn(),
   BarElement: vi.fn(),
+  PointElement: vi.fn(),
+  LineElement: vi.fn(),
+  Title: vi.fn(),
   Tooltip: vi.fn(),
   Legend: vi.fn(),
 }))

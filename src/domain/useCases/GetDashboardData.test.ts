@@ -9,6 +9,7 @@ import { InvoiceTestDataFactory } from '../__tests__/utils/invoiceTestDataFactor
 
 const mockInvoiceGateway: Mocked<InvoiceGateway> = {
   getAllInvoices: vi.fn(),
+  createInvoice: vi.fn(),
 }
 
 const mockCalculateCashFlow: Mocked<CalculateCashFlow> = {
@@ -83,8 +84,7 @@ describe('GetDashboardData', () => {
     await useCase.execute()
     expect(mockCalculateCashFlow.execute).toHaveBeenCalledWith(mockInvoices)
     expect(mockCalculateDeadlineCompliance.execute).toHaveBeenCalledWith(
-      mockInvoices,
-      7
+      mockInvoices
     )
     expect(mockCalculateClientReliability.execute).toHaveBeenCalledWith(
       mockInvoices
@@ -104,21 +104,6 @@ describe('GetDashboardData', () => {
     })
   })
 
-  it('should use default days parameter of 7', async () => {
-    await useCase.execute()
-    expect(mockCalculateDeadlineCompliance.execute).toHaveBeenCalledWith(
-      mockInvoices,
-      7
-    )
-  })
-
-  it('should pass custom days parameter to deadline compliance', async () => {
-    await useCase.execute(14)
-    expect(mockCalculateDeadlineCompliance.execute).toHaveBeenCalledWith(
-      mockInvoices,
-      14
-    )
-  })
 
   it('should handle gateway errors', async () => {
     const error = new Error('Gateway error')

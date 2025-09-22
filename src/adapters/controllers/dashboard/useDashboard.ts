@@ -9,7 +9,6 @@ import {
   CalculateRevenueStructure,
   DashboardData,
 } from '../../../domain/useCases'
-import { useDashboardSearchParams } from './useDashboardSearchParams'
 
 export const useDashboard = () => {
   const api = useApi()
@@ -17,10 +16,9 @@ export const useDashboard = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const hasFetchedRef = useRef(false);
-  const { deadlineComplianceDays } = useDashboardSearchParams()
 
   const fetchDashboardData = useCallback(
-    async (days: number) => {
+    async () => {
       if (hasFetchedRef.current) return;
       hasFetchedRef.current = true;
       try {
@@ -33,7 +31,7 @@ export const useDashboard = () => {
           new CalculateClientReliability(),
           new CalculateRevenueStructure()
         )
-        const result = await useCase.execute(days)
+        const result = await useCase.execute()
         setData(result)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error')
@@ -46,9 +44,9 @@ export const useDashboard = () => {
   )
 
   useEffect(() => {
-    fetchDashboardData(deadlineComplianceDays);
+    fetchDashboardData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchDashboardData, deadlineComplianceDays])
+  }, [fetchDashboardData])
 
   return { data, loading, error }
 }

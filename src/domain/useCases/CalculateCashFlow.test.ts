@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { CalculateCashFlow } from './CalculateCashFlow'
 import {
   InvoiceTestDataFactory,
-  InvoiceLineTestDataFactory,
 } from '../__tests__/utils'
 
 const AMOUNT_1000 = '1000.00'

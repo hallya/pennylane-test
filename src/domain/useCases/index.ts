@@ -1,11 +1,14 @@
 export type { InvoiceGateway } from './InvoiceGateway';
+export type { CustomerGateway } from './CustomerGateway';
 export type { DashboardData } from './GetDashboardData';
 export type { CashFlowData } from './CalculateCashFlow';
 export type { DeadlineData } from './CalculateDeadlineCompliance';
 export type { ClientReliabilityData } from './CalculateClientReliability';
 export type { RevenueStructureData } from './CalculateRevenueStructure';
+export type { SearchCustomersUseCase } from './SearchCustomers';
 export { CalculateCashFlow } from './CalculateCashFlow';
 export { CalculateDeadlineCompliance } from './CalculateDeadlineCompliance';
 export { CalculateClientReliability } from './CalculateClientReliability';
 export { CalculateRevenueStructure } from './CalculateRevenueStructure';
 export { GetDashboardData } from './GetDashboardData';
+export { SearchCustomersUseCaseImpl } from './SearchCustomers';

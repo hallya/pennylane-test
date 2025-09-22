@@ -2,12 +2,12 @@ import { Invoice } from '../../types';
 import { InvoiceEntity } from '../entities';
 
 export interface DeadlineData {
-  dueSoon: InvoiceEntity[]; // Next 7, 15, 30 days
+  dueSoon: InvoiceEntity[];
   overdue: InvoiceEntity[];
 }
 
 export class CalculateDeadlineCompliance {
-  execute(invoices: Invoice[], days: number = 7): DeadlineData {
+  execute(invoices: Invoice[]): DeadlineData {
     const invoiceEntities = invoices.map(inv => new InvoiceEntity(inv));
     const dueSoon: InvoiceEntity[] = [];
     const overdue: InvoiceEntity[] = [];

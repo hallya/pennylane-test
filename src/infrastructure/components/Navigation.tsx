@@ -17,7 +17,7 @@ const Navigation: React.FC = () => {
                 isActive ? 'nav-link active' : 'nav-link'
               }
             >
-              Dashboard
+              Tableau de Bord
             </NavLink>
             <NavLink
               to="/invoices"
@@ -25,7 +25,7 @@ const Navigation: React.FC = () => {
                 isActive ? 'nav-link active' : 'nav-link'
               }
             >
-              Invoices
+              Factures
             </NavLink>
           </Nav>
         </Navbar.Collapse>

@@ -5,10 +5,19 @@ import { Client, Components } from '../../api/gen/client';
 export class InvoiceGatewayImpl implements InvoiceGateway {
   constructor(private api: Client) {}
 
-  async getAllInvoices(page?: number, perPage?: number): Promise<PaginatedInvoices> {
+  async getAllInvoices(page?: number, perPage?: number, customerId?: number): Promise<PaginatedInvoices> {
     const params: any = {};
     if (page !== undefined) params.page = page;
     if (perPage !== undefined) params.per_page = perPage;
+
+    if (customerId !== undefined) {
+      params.filter = JSON.stringify([{
+        field: 'customer_id',
+        operator: 'eq',
+        value: customerId
+      }]);
+    }
+
     const { data } = await this.api.getInvoices(params);
     return data;
   }

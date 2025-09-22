@@ -9,6 +9,7 @@ import { AxiosError } from 'openapi-client-axios'
 interface UseInvoicesParams {
   page?: number
   perPage?: number
+  customerId?: number
 }
 
 interface UseInvoicesReturn {
@@ -22,6 +23,7 @@ interface UseInvoicesReturn {
 export const useInvoices = ({
   page = 1,
   perPage = 25,
+  customerId,
 }: UseInvoicesParams = {}): UseInvoicesReturn => {
   const api = useApi()
   const { showToast } = useToast()
@@ -38,7 +40,7 @@ export const useInvoices = ({
       setLoading(true)
       setError(null)
       const gateway = new InvoiceGatewayImpl(api)
-      const result = await gateway.getAllInvoices(page, perPage)
+      const result = await gateway.getAllInvoices(page, perPage, customerId)
       const invoiceEntities = result.invoices.map(
         (invoice) => new InvoiceEntity(invoice)
       )
@@ -59,7 +61,7 @@ export const useInvoices = ({
       setLoading(false)
       hasFetched.current = false
     }
-  }, [api, page, perPage])
+  }, [api, page, perPage, customerId])
 
   useEffect(() => {
     fetchInvoices()

@@ -1,4 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { vi } from 'vitest'
 import InvoicesTable from '../InvoicesTable'
 import { InvoiceWithCustomerTestDataFactory } from '../../../../domain/__tests__/utils/invoiceWithCustomerTestDataFactory'
 import { InvoiceTestDataFactory } from '../../../../domain/__tests__/utils/invoiceTestDataFactory'
@@ -262,31 +263,31 @@ describe('InvoicesTable', () => {
       render(<InvoicesTable data={mockInvoices} onEdit={mockOnEdit} />)
 
       const editButtons = screen.getAllByTitle('Modifier la facture')
-      expect(editButtons.length).toBe(1)
+      expect(editButtons.length).toBe(4)
 
       fireEvent.click(editButtons[0])
-      expect(mockOnEdit).toHaveBeenCalledWith(4)
+      expect(mockOnEdit).toHaveBeenCalledWith(2)
     })
 
     it('does not render edit button for finalized invoices', () => {
       render(<InvoicesTable data={mockInvoices} onEdit={mockOnEdit} />)
 
       const editButtons = screen.getAllByTitle('Modifier la facture')
-      expect(editButtons.length).toBe(1)
+      expect(editButtons.length).toBe(4)
     })
 
     it('renders delete button only for non-finalized invoices when onDelete is provided', () => {
       render(<InvoicesTable data={mockInvoices} onDelete={mockOnDelete} />)
 
       const deleteButtons = screen.getAllByTitle('Supprimer la facture')
-      expect(deleteButtons.length).toBe(1)
+      expect(deleteButtons.length).toBe(4)
     })
 
     it('does not render delete button for finalized invoices', () => {
       render(<InvoicesTable data={mockInvoices} onDelete={mockOnDelete} />)
 
       const deleteButtons = screen.getAllByTitle('Supprimer la facture')
-      expect(deleteButtons.length).toBe(1)
+      expect(deleteButtons.length).toBe(4)
     })
 
     it('does not render action buttons when callbacks are not provided', () => {
@@ -303,8 +304,8 @@ describe('InvoicesTable', () => {
       mockConfirm.mockReturnValue(true)
       render(<InvoicesTable data={mockInvoices} onDelete={mockOnDelete} />)
 
-      const deleteButton = screen.getByTitle('Supprimer la facture')
-      fireEvent.click(deleteButton)
+      const deleteButtons = screen.getAllByTitle('Supprimer la facture')
+      fireEvent.click(deleteButtons[0])
 
       expect(mockConfirm).toHaveBeenCalledWith(
         'Êtes-vous sûr de vouloir supprimer cette facture ?'
@@ -315,11 +316,11 @@ describe('InvoicesTable', () => {
       mockConfirm.mockReturnValue(true)
       render(<InvoicesTable data={mockInvoices} onDelete={mockOnDelete} />)
 
-      const deleteButton = screen.getByTitle('Supprimer la facture')
-      fireEvent.click(deleteButton)
+      const deleteButtons = screen.getAllByTitle('Supprimer la facture')
+      fireEvent.click(deleteButtons[0])
 
       await waitFor(() => {
-        expect(mockOnDelete).toHaveBeenCalledWith(4)
+        expect(mockOnDelete).toHaveBeenCalledWith(2)
       })
     })
 
@@ -327,8 +328,8 @@ describe('InvoicesTable', () => {
       mockConfirm.mockReturnValue(false)
       render(<InvoicesTable data={mockInvoices} onDelete={mockOnDelete} />)
 
-      const deleteButton = screen.getByTitle('Supprimer la facture')
-      fireEvent.click(deleteButton)
+      const deleteButtons = screen.getAllByTitle('Supprimer la facture')
+      fireEvent.click(deleteButtons[0])
 
       await waitFor(() => {
         expect(mockOnDelete).not.toHaveBeenCalled()

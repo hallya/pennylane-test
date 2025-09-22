@@ -49,6 +49,7 @@ vi.mock('react-router-dom', () => ({
     </a>
   ),
   useNavigate: vi.fn(),
+  useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()]),
 }))
 
 describe('Invoices', () => {

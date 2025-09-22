@@ -1,7 +1,7 @@
-import { Invoice } from '../../types';
+import { Invoice, PaginatedInvoices } from '../../types';
 import { Components } from '../../api/gen/client';
 
 export interface InvoiceGateway {
-  getAllInvoices(): Promise<Invoice[]>;
+  getAllInvoices(page?: number, perPage?: number): Promise<PaginatedInvoices>;
   createInvoice(payload: Components.Schemas.InvoiceCreatePayload): Promise<Invoice>;
 }

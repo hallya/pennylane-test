@@ -1,13 +1,16 @@
 import { InvoiceGateway } from '../../domain/useCases';
-import { Invoice } from '../../types';
+import { Invoice, PaginatedInvoices } from '../../types';
 import { Client, Components } from '../../api/gen/client';
 
 export class InvoiceGatewayImpl implements InvoiceGateway {
   constructor(private api: Client) {}
 
-  async getAllInvoices(): Promise<Invoice[]> {
-    const { data } = await this.api.getInvoices();
-    return data.invoices;
+  async getAllInvoices(page?: number, perPage?: number): Promise<PaginatedInvoices> {
+    const params: any = {};
+    if (page !== undefined) params.page = page;
+    if (perPage !== undefined) params.per_page = perPage;
+    const { data } = await this.api.getInvoices(params);
+    return data;
   }
 
   async createInvoice(payload: Components.Schemas.InvoiceCreatePayload): Promise<Invoice> {

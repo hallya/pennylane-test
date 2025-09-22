@@ -1,3 +1,5 @@
 export { InvoiceFormFields } from './InvoiceFormFields'
 export { CustomerSelector } from './CustomerSelector'
 export { ProductLinesSelector } from './ProductLinesSelector'
+export { default as InvoicesTable } from './InvoicesTable'
+export { default as InvoicesPagination } from './InvoicesPagination'

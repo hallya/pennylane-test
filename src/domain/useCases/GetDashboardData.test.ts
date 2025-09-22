@@ -29,6 +29,10 @@ const mockCalculateRevenueStructure: Mocked<CalculateRevenueStructure> = {
 }
 
 const mockInvoices = [InvoiceTestDataFactory.create()]
+const mockPaginatedInvoices = {
+  pagination: { page: 1, page_size: 10000, total_pages: 1, total_entries: 1 },
+  invoices: mockInvoices,
+}
 const mockCashFlowData = {
   totalIssued: 1000,
   totalReceived: 500,
@@ -56,7 +60,7 @@ describe('GetDashboardData', () => {
   beforeEach(() => {
     vi.clearAllMocks()
 
-    mockInvoiceGateway.getAllInvoices.mockResolvedValue(mockInvoices)
+    mockInvoiceGateway.getAllInvoices.mockResolvedValue(mockPaginatedInvoices)
     mockCalculateCashFlow.execute.mockReturnValue(mockCashFlowData)
     mockCalculateDeadlineCompliance.execute.mockReturnValue(mockDeadlineData)
     mockCalculateClientReliability.execute.mockReturnValue(
@@ -126,7 +130,7 @@ describe('GetDashboardData', () => {
 
     mockInvoiceGateway.getAllInvoices.mockImplementation(async () => {
       callOrder.push('gateway')
-      return mockInvoices
+      return mockPaginatedInvoices
     })
 
     mockCalculateCashFlow.execute.mockImplementation(() => {

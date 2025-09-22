@@ -48,6 +48,7 @@ vi.mock('react-router-dom', () => ({
       {children}
     </a>
   ),
+  useNavigate: vi.fn(),
 }))
 
 describe('Invoices', () => {

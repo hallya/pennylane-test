@@ -13,8 +13,18 @@ export class InvoiceGatewayImpl implements InvoiceGateway {
     return data;
   }
 
+  async getInvoice(id: number): Promise<Invoice> {
+    const { data } = await this.api.getInvoice(id);
+    return data;
+  }
+
   async createInvoice(payload: Components.Schemas.InvoiceCreatePayload): Promise<Invoice> {
     const { data } = await this.api.postInvoices(null, { invoice: payload });
+    return data;
+  }
+
+  async updateInvoice(id: number, payload: Components.Schemas.InvoiceUpdatePayload): Promise<Invoice> {
+    const { data } = await this.api.putInvoice(id, { invoice: payload });
     return data;
   }
 

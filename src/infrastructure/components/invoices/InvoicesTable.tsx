@@ -11,9 +11,10 @@ import { formatCurrency } from '../../shared/chartUtils'
 interface InvoicesTableProps {
   data: InvoiceEntity[]
   onDelete?: (id: number) => void | Promise<void>
+  onEdit?: (id: number) => void
 }
 
-const InvoicesTable: React.FC<InvoicesTableProps> = ({ data, onDelete }) => {
+const InvoicesTable: React.FC<InvoicesTableProps> = ({ data, onDelete, onEdit }) => {
   const formatDate = (dateString: string | null) => {
     if (!dateString) return '-'
     return new Date(dateString).toLocaleDateString('fr-FR')
@@ -113,7 +114,16 @@ const InvoicesTable: React.FC<InvoicesTableProps> = ({ data, onDelete }) => {
                 <td>
                   <div className="d-flex align-items-center">
                     <span>#{invoice.id}</span>
-                    {onDelete && (
+                    {onEdit && !invoice.finalized && (
+                      <button
+                        className="btn btn-sm btn-outline-primary ms-2"
+                        onClick={() => onEdit(invoice.id)}
+                        title="Modifier la facture"
+                      >
+                        <i className="bi bi-pencil"></i>
+                      </button>
+                    )}
+                    {onDelete && !invoice.finalized && (
                       <button
                         className="btn btn-sm btn-outline-danger ms-2"
                         onClick={() => handleDelete(invoice.id)}

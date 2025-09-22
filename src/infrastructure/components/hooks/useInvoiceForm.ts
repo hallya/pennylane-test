@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCreateInvoice } from '../../../adapters/controllers'
+import { useUpdateInvoice } from '../../../adapters/controllers/invoices/useUpdateInvoice'
+import { useGetInvoice } from '../../../adapters/controllers/invoices/useGetInvoice'
 import { useSearchCustomers } from '../../../adapters/controllers/customers'
 import { useSearchProducts } from '../../../adapters/controllers/products/useProducts'
 import { useDebouncedSearch, useFormManager } from './index'
@@ -8,9 +10,15 @@ import { Components } from '../../../api/gen/client'
 import { ValidationMode, InvoiceFormData } from '../../pages/invoices/types'
 import { INVOICE_FORM_CONSTANTS } from '../../../domain/constants'
 
-export function useCreateInvoiceForm() {
+type InvoiceFormMode = 'create' | 'edit'
+
+export function useInvoiceForm(mode: InvoiceFormMode, invoiceId?: number) {
   const navigate = useNavigate()
   const { createInvoice } = useCreateInvoice()
+  const { updateInvoice } = useUpdateInvoice()
+  const { data: invoiceData, loading: invoiceLoading } = useGetInvoice(
+    mode === 'edit' ? invoiceId || null : null
+  )
 
   const [selectedCustomer, setSelectedCustomer] =
     useState<Components.Schemas.Customer | null>(null)
@@ -19,22 +27,8 @@ export function useCreateInvoiceForm() {
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [showProducts, setShowProducts] = useState(false)
 
-  const { form, handleSubmit } = useFormManager<InvoiceFormData>({
-    onSubmit: async (data) => {
-      if (!selectedCustomer) return
-
-      const payload = {
-        customer_id: selectedCustomer.id,
-        finalized: validationMode === 'finalize',
-        ...(data.paid !== undefined && { paid: data.paid }),
-        ...(data.date && { date: data.date }),
-        ...(data.deadline && { deadline: data.deadline }),
-        invoice_lines_attributes: Array.from(data.invoiceLines.values()),
-      }
-
-      await createInvoice(payload)
-      navigate('/invoices')
-    },
+  const { form } = useFormManager<InvoiceFormData>({
+    onSubmit: () => {}, // Not used, we handle submission manually
     initialValues: {
       customerName: '',
       date: '',
@@ -49,6 +43,41 @@ export function useCreateInvoiceForm() {
   const [validationMode, setValidationMode] = useState<ValidationMode | null>(
     null
   )
+
+  useEffect(() => {
+    if (mode === 'edit' && invoiceData && !invoiceLoading) {
+      if (invoiceData.customer) {
+        setSelectedCustomer(invoiceData.customer)
+        form.setValue(
+          'customerName',
+          `${invoiceData.customer.first_name} ${invoiceData.customer.last_name}`
+        )
+      }
+
+      form.setValue('date', invoiceData.date || '')
+      form.setValue('deadline', invoiceData.deadline || '')
+      form.setValue('paid', invoiceData.paid)
+
+      const linesMap = new Map<
+        number,
+        Components.Schemas.InvoiceLineCreatePayload & { id?: number }
+      >()
+      invoiceData.invoice_lines.forEach((line) => {
+        linesMap.set(line.product_id, {
+          ...line,
+          id: line.id,
+          product_id: line.product_id,
+          quantity: line.quantity,
+          label: line.label,
+          unit: line.unit,
+          vat_rate: line.vat_rate,
+          price: line.price,
+          tax: line.tax,
+        })
+      })
+      form.setValue('invoiceLines', linesMap)
+    }
+  }, [mode, invoiceData, invoiceLoading, form])
 
   const { customers, searchCustomers } = useSearchCustomers()
 
@@ -133,14 +162,49 @@ export function useCreateInvoiceForm() {
     form.setValue('invoiceLines', new Map(currentLines))
   }
 
+  const submitInvoice = async (data: InvoiceFormData, finalized: boolean) => {
+    if (!selectedCustomer) return
+
+    if (mode === 'create') {
+      const payload = {
+        customer_id: selectedCustomer.id,
+        finalized,
+        ...(data.paid !== undefined && { paid: data.paid }),
+        ...(data.date && { date: data.date }),
+        ...(data.deadline && { deadline: data.deadline }),
+        invoice_lines_attributes: Array.from(data.invoiceLines.values()),
+      }
+
+      await createInvoice(payload)
+    } else if (mode === 'edit' && invoiceId) {
+      const payload: Components.Schemas.InvoiceUpdatePayload = {
+        id: invoiceId,
+        customer_id: selectedCustomer.id,
+        finalized,
+        ...(data.paid !== undefined && { paid: data.paid }),
+        ...(data.date && { date: data.date }),
+        ...(data.deadline && { deadline: data.deadline }),
+        invoice_lines_attributes: Array.from(data.invoiceLines.values()).map(
+          (line) => ({
+            ...line,
+            id: line.id,
+          })
+        ),
+      }
+
+      await updateInvoice(invoiceId, payload)
+    }
+    navigate('/invoices')
+  }
+
   const handleSave = () => {
     setValidationMode('save')
-    handleSubmit()
+    form.handleSubmit((data) => submitInvoice(data, false))()
   }
 
   const handleFinalize = () => {
     setValidationMode('finalize')
-    handleSubmit()
+    form.handleSubmit((data) => submitInvoice(data, true))()
   }
 
   return {

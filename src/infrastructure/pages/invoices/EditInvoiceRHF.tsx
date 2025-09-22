@@ -1,10 +1,12 @@
-import { useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { Form, Container, Row, Col, Card } from 'react-bootstrap'
 import { useInvoiceForm } from '../../components/hooks/useInvoiceForm'
 import { InvoiceFormFields, CustomerSelector, ProductLinesSelector } from '../../components/invoices'
 
-const CreateInvoiceRHF: React.FC = () => {
-  const navigate = useNavigate()
+const EditInvoiceRHF: React.FC = () => {
+  const { id } = useParams<{ id: string }>()
+  const invoiceId = id ? parseInt(id, 10) : undefined
+
   const {
     customers,
     form,
@@ -26,7 +28,7 @@ const CreateInvoiceRHF: React.FC = () => {
     handleSave,
     searchProducts,
     setSelectedProduct,
-  } = useInvoiceForm('create')
+  } = useInvoiceForm('edit', invoiceId)
 
   return (
     <main className="container-fluid mt-4" role="main">
@@ -35,7 +37,7 @@ const CreateInvoiceRHF: React.FC = () => {
           <Col md={8}>
             <Card>
               <Card.Header>
-                <h1 className="mb-0">Créer une Nouvelle Facture</h1>
+                <h1 className="mb-0">Modifier la Facture #{invoiceId}</h1>
               </Card.Header>
               <Card.Body>
                 <Form noValidate>
@@ -74,7 +76,7 @@ const CreateInvoiceRHF: React.FC = () => {
                     <button
                       type="button"
                       className="btn btn-secondary"
-                      onClick={() => navigate('/invoices')}
+                      onClick={() => window.history.back()}
                     >
                       Annuler
                     </button>
@@ -103,4 +105,4 @@ const CreateInvoiceRHF: React.FC = () => {
   )
 }
 
-export default CreateInvoiceRHF
+export default EditInvoiceRHF

@@ -1,10 +1,29 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { vi } from 'vitest'
-import { BrowserRouter } from 'react-router-dom'
-import CreateInvoiceRHF from '../CreateInvoiceRHF'
+import { MemoryRouter } from 'react-router-dom'
+import EditInvoiceRHF from '../EditInvoiceRHF'
 import { useInvoiceForm } from '../../../components/hooks'
 import { CustomerTestDataFactory } from '../../../../domain/__tests__/utils/customerTestDataFactory'
 import { ProductTestDataFactory } from '../../../../domain/__tests__/utils/productTestDataFactory'
+
+const mockHistoryBack = vi.fn()
+const mockUseParams = vi.fn(() => ({ id: '123' }))
+
+Object.defineProperty(window, 'history', {
+  value: {
+    back: mockHistoryBack,
+  },
+  writable: true,
+})
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom')
+  return {
+    ...actual,
+    useParams: mockUseParams,
+    useNavigate: vi.fn(),
+  }
+})
 
 vi.mock('../../../components/hooks', () => ({
   useInvoiceForm: vi.fn(),
@@ -107,16 +126,16 @@ vi.mock('../../../components/invoices', () => ({
   ),
 }))
 
-const mockNavigate = vi.fn()
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom')
   return {
     ...actual,
-    useNavigate: () => mockNavigate,
+    useParams: vi.fn(() => ({ id: '123' })),
+    useNavigate: vi.fn(),
   }
 })
 
-describe('CreateInvoiceRHF', () => {
+describe('EditInvoiceRHF', () => {
   const mockForm = {
     control: {},
     handleSubmit: vi.fn(),
@@ -173,25 +192,34 @@ describe('CreateInvoiceRHF', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    mockNavigate.mockClear()
     vi.mocked(useInvoiceForm).mockReturnValue(defaultMockHookReturn)
   })
 
-  const renderComponent = () => {
+  const renderComponent = (invoiceId: string = '123') => {
+    // Mock react-router-dom with the specific invoice ID
+    vi.doMock('react-router-dom', async () => {
+      const actual = await vi.importActual('react-router-dom')
+      return {
+        ...actual,
+        useParams: vi.fn(() => ({ id: invoiceId })),
+        useNavigate: vi.fn(),
+      }
+    })
+
     return render(
-      <BrowserRouter>
-        <CreateInvoiceRHF />
-      </BrowserRouter>
+      <MemoryRouter>
+        <EditInvoiceRHF />
+      </MemoryRouter>
     )
   }
 
-  it('renders the invoice creation page with correct title', () => {
+  it('renders the invoice edit page with correct title', () => {
     renderComponent()
 
     expect(
       screen.getByRole('heading', {
         level: 1,
-        name: 'Créer une Nouvelle Facture',
+        name: 'Modifier la Facture #123',
       })
     ).toBeInTheDocument()
   })
@@ -224,13 +252,13 @@ describe('CreateInvoiceRHF', () => {
     ).toBeInTheDocument()
   })
 
-  it('navigates to invoices list when cancel button is clicked', async () => {
+  it('navigates back when cancel button is clicked', async () => {
     renderComponent()
 
     const cancelButton = screen.getByRole('button', { name: 'Annuler' })
     await fireEvent.click(cancelButton)
 
-    expect(mockNavigate).toHaveBeenCalledWith('/invoices')
+    expect(window.history.back).toHaveBeenCalled()
   })
 
   it('renders with different hook values', () => {
@@ -250,9 +278,14 @@ describe('CreateInvoiceRHF', () => {
     expect(
       screen.getByRole('heading', {
         level: 1,
-        name: 'Créer une Nouvelle Facture',
+        name: 'Modifier la Facture #123',
       })
     ).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Annuler' })).toBeInTheDocument()
+  })
+
+  it('renders with different invoice IDs', () => {
+    expect(() => renderComponent('456')).not.toThrow()
+    expect(() => renderComponent('invalid')).not.toThrow()
   })
 })

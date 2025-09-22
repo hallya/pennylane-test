@@ -1,16 +1,21 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from 'react-bootstrap'
 import { useInvoices, useDeleteInvoice } from '../../../adapters/controllers'
 import { InvoicesTable, InvoicesPagination } from '../../components'
 
 const Invoices: React.FC = () => {
+  const navigate = useNavigate()
   const [currentPage, setCurrentPage] = useState(1)
   const { data, loading, error, pagination, refetch } = useInvoices({
     page: currentPage,
     perPage: 50,
   })
   const { deleteInvoice } = useDeleteInvoice()
+
+  const handleEdit = (id: number) => {
+    navigate(`/invoices/edit/${id}`)
+  }
 
   const handleDelete = async (id: number) => {
     try {
@@ -82,7 +87,7 @@ const Invoices: React.FC = () => {
           </Link>
         </header>
 
-        <InvoicesTable data={data} onDelete={handleDelete} />
+        <InvoicesTable data={data} onDelete={handleDelete} onEdit={handleEdit} />
 
         <InvoicesPagination
           currentPage={currentPage}

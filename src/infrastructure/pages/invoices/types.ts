@@ -17,7 +17,7 @@ export type InvoiceFormData = {
   date?: string
   deadline?: string
   customerName: string
-  invoiceLines: Map<number, Components.Schemas.InvoiceLineCreatePayload>
+  invoiceLines: Map<number, Components.Schemas.InvoiceLineCreatePayload & { id?: number }>
   quantity: number
 }
 

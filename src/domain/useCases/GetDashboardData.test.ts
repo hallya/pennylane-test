@@ -9,7 +9,9 @@ import { InvoiceTestDataFactory } from '../__tests__/utils/invoiceTestDataFactor
 
 const mockInvoiceGateway: Mocked<InvoiceGateway> = {
   getAllInvoices: vi.fn(),
+  getInvoice: vi.fn(),
   createInvoice: vi.fn(),
+  updateInvoice: vi.fn(),
   deleteInvoice: vi.fn(),
 }
 

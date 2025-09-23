@@ -48,7 +48,7 @@ export const useDashboard = () => {
         setLoading(false)
       }
     },
-    [api]
+    [api, showToast]
   )
 
   useEffect(() => {

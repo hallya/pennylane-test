@@ -9,15 +9,16 @@ import {
 import { formatCurrency } from '../../shared/chartUtils'
 import InvoicesTableHeader from './InvoicesTableHeader'
 
-interface InvoicesTableProps {
+export interface InvoicesTableProps {
   data: InvoiceEntity[]
-  onDelete?: (id: number) => void | Promise<void>
-  onEdit?: (id: number) => void
+  onDelete: (id: number) => void | Promise<void>
+  onEdit: (id: number) => void
+  onView: (id: number) => void
   onCustomerClick?: (customerId: number) => void
 }
 
 const InvoicesTable: React.FC<InvoicesTableProps> = React.memo(
-  ({ data, onDelete, onEdit, onCustomerClick }) => {
+  ({ data, onDelete, onEdit, onView, onCustomerClick }) => {
     const formatDate = (dateString: string | null) => {
       if (!dateString) return '-'
       return new Date(dateString).toLocaleDateString('fr-FR')
@@ -38,9 +39,9 @@ const InvoicesTable: React.FC<InvoicesTableProps> = React.memo(
         className="table-responsive invoices-table-container"
         data-testid="invoices-table-wrapper"
         style={{
-        maxHeight: '75vh',
-        overflowY: 'auto',
-      }}
+          maxHeight: '75vh',
+          overflowY: 'auto',
+        }}
       >
         <table className="table table-striped table-hover table-bordered">
           <InvoicesTableHeader />
@@ -61,7 +62,9 @@ const InvoicesTable: React.FC<InvoicesTableProps> = React.memo(
                   <td>
                     {invoice.customer ? (
                       <span
-                        className={onCustomerClick ? 'clickable-customer-name' : ''}
+                        className={
+                          onCustomerClick ? 'clickable-customer-name' : ''
+                        }
                         style={{
                           cursor: onCustomerClick ? 'pointer' : 'default',
                           color: onCustomerClick ? '#007bff' : 'inherit',
@@ -117,7 +120,14 @@ const InvoicesTable: React.FC<InvoicesTableProps> = React.memo(
                   <td>
                     <div className="d-flex align-items-center">
                       <span>#{invoice.id}</span>
-                      {onEdit && !invoice.paid && (
+                      <button
+                        className="btn btn-sm btn-outline-info ms-2"
+                        onClick={() => onView(invoice.id)}
+                        title="Voir la facture"
+                      >
+                        <i className="bi bi-eye"></i>
+                      </button>
+                      {!invoice.paid && (
                         <button
                           className="btn btn-sm btn-outline-primary ms-2"
                           onClick={() => onEdit(invoice.id)}
@@ -126,7 +136,7 @@ const InvoicesTable: React.FC<InvoicesTableProps> = React.memo(
                           <i className="bi bi-pencil"></i>
                         </button>
                       )}
-                      {onDelete && !invoice.paid && (
+                      {!invoice.paid && (
                         <button
                           className="btn btn-sm btn-outline-danger ms-2"
                           onClick={() => handleDelete(invoice.id)}

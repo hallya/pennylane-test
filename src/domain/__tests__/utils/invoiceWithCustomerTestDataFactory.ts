@@ -11,6 +11,7 @@ export class InvoiceWithCustomerTestDataFactory {
     const invoice = InvoiceTestDataFactory.overdue({
       customer_id: customer.id,
       customer,
+      paid: false,
       ...overrides.invoice,
     })
 
@@ -25,6 +26,7 @@ export class InvoiceWithCustomerTestDataFactory {
     const invoice = InvoiceTestDataFactory.dueSoon({
       customer_id: customer.id,
       customer,
+      paid: false,
       ...overrides.invoice,
     })
 
@@ -39,6 +41,7 @@ export class InvoiceWithCustomerTestDataFactory {
     const invoice = InvoiceTestDataFactory.paid({
       customer_id: customer.id,
       customer,
+      paid: true,
       ...overrides.invoice,
     })
 

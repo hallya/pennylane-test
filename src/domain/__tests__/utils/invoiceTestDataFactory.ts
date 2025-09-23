@@ -8,7 +8,6 @@ export class InvoiceTestDataFactory {
     const id = overrides.id || faker.number.int({ min: 1, max: 1000 })
     const total = overrides.total || faker.finance.amount()
     const tax = overrides.tax || faker.finance.amount()
-    const subtotal = (parseFloat(total) - parseFloat(tax)).toFixed(2)
 
     return {
       id,

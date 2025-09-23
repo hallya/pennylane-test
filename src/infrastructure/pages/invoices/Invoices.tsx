@@ -5,40 +5,6 @@ import { useInvoices, useDeleteInvoice } from '../../../adapters/controllers'
 import { InvoicesTable, InvoicesPagination } from '../../components'
 import FilterBadge from '../../components/invoices/FilterBadge'
 
-const INVOICES_PER_PAGE = 50
-
-const useInvoiceFilters = () => {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [currentPage, setCurrentPage] = useState(1)
-
-  const customerId = searchParams.get('customerId')
-    ? parseInt(searchParams.get('customerId')!)
-    : undefined
-
-  const setCustomerFilter = useCallback(
-    (customerId: number) => {
-      setSearchParams({ customerId: customerId.toString() })
-      setCurrentPage(1)
-    },
-    [setSearchParams]
-  )
-
-  const clearCustomerFilter = useCallback(() => {
-    const newSearchParams = new URLSearchParams(searchParams)
-    newSearchParams.delete('customerId')
-    setSearchParams(newSearchParams)
-    setCurrentPage(1)
-  }, [searchParams, setSearchParams])
-
-  return {
-    customerId,
-    currentPage,
-    setCurrentPage,
-    setCustomerFilter,
-    clearCustomerFilter,
-  }
-}
-
 const InvoicesFilter: React.FC<{
   customerId?: number
   onRemoveFilter: () => void
@@ -82,6 +48,13 @@ const Invoices: React.FC = () => {
   const handleEdit = useCallback(
     (id: number) => {
       navigate(`/invoices/edit/${id}`)
+    },
+    [navigate]
+  )
+
+  const handleView = useCallback(
+    (id: number) => {
+      navigate(`/invoices/view/${id}`)
     },
     [navigate]
   )
@@ -183,6 +156,7 @@ const Invoices: React.FC = () => {
           data={data}
           onDelete={handleDelete}
           onEdit={handleEdit}
+          onView={handleView}
           onCustomerClick={handleCustomerClick}
         />
 

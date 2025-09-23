@@ -61,7 +61,7 @@ export const useInvoices = ({
       setLoading(false)
       hasFetched.current = false
     }
-  }, [api, page, perPage, customerId])
+  }, [api, page, perPage, customerId, showToast])
 
   useEffect(() => {
     fetchInvoices()

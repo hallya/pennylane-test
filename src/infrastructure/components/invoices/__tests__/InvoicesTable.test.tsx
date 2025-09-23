@@ -1,10 +1,10 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { vi } from 'vitest'
-import InvoicesTable from '../InvoicesTable'
+import InvoicesTable, { InvoicesTableProps } from '../InvoicesTable'
 import { InvoiceWithCustomerTestDataFactory } from '../../../../domain/__tests__/utils/invoiceWithCustomerTestDataFactory'
 import { InvoiceTestDataFactory } from '../../../../domain/__tests__/utils/invoiceTestDataFactory'
 import { InvoiceLineTestDataFactory } from '../../../../domain/__tests__/utils/invoiceLineTestDataFactory'
 import { InvoiceEntity } from '../../../../domain/entities'
+import { Mock } from 'vitest'
 
 const mockConfirm = vi.fn()
 Object.defineProperty(window, 'confirm', {
@@ -14,12 +14,15 @@ Object.defineProperty(window, 'confirm', {
 
 describe('InvoicesTable', () => {
   let mockInvoices: InvoiceEntity[]
-  let mockOnDelete: ReturnType<typeof vi.fn>
-  let mockOnEdit: ReturnType<typeof vi.fn>
+  let mockOnDelete: Mock
+  let mockOnEdit: Mock
+  let mockOnView: Mock
+  let defaultProps: InvoicesTableProps
 
   beforeEach(() => {
     mockOnDelete = vi.fn()
     mockOnEdit = vi.fn()
+    mockOnView = vi.fn()
     mockConfirm.mockReset()
 
     mockInvoices = [
@@ -105,25 +108,60 @@ describe('InvoicesTable', () => {
         })
       ),
     ]
+
+    defaultProps = {
+      data: mockInvoices,
+      onEdit: mockOnEdit,
+      onDelete: mockOnDelete,
+      onView: mockOnView,
+    }
   })
 
   describe('Basic Rendering', () => {
     it('renders table with correct headers', () => {
-      render(<InvoicesTable data={mockInvoices} />)
+      render(<InvoicesTable {...defaultProps} />)
 
-      expect(screen.getByText('Statut')).toBeInTheDocument()
-      expect(screen.getByText('Prénom et nom du customer')).toBeInTheDocument()
-      expect(screen.getByText("Date d'émission")).toBeInTheDocument()
-      expect(screen.getByText('Échéance')).toBeInTheDocument()
-      expect(screen.getByText('Total HT')).toBeInTheDocument()
-      expect(screen.getByText('Total TVA')).toBeInTheDocument()
-      expect(screen.getByText('Total TTC')).toBeInTheDocument()
-      expect(screen.getByText('Total perçu')).toBeInTheDocument()
-      expect(screen.getByText('ID')).toBeInTheDocument()
+      const table = screen.getByRole('table')
+      expect(table).toBeInTheDocument()
+
+      expect(
+        screen.getByRole('columnheader', { name: /statut/i })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('columnheader', { name: /prénom et nom du customer/i })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('columnheader', { name: /date d'émission/i })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('columnheader', { name: /échéance/i })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('columnheader', { name: /total ht/i })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('columnheader', { name: /total tva/i })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('columnheader', { name: /total ttc/i })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('columnheader', { name: /total perçu/i })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('columnheader', { name: /id/i })
+      ).toBeInTheDocument()
     })
-    
+
     it('renders empty data array', () => {
-      render(<InvoicesTable data={[]} />)
+      render(
+        <InvoicesTable
+          data={[]}
+          onDelete={mockOnDelete}
+          onEdit={mockOnEdit}
+          onView={mockOnView}
+        />
+      )
 
       expect(screen.getByText('Statut')).toBeInTheDocument()
       expect(
@@ -134,7 +172,7 @@ describe('InvoicesTable', () => {
 
   describe('Invoice Data Display', () => {
     it('renders all invoice data correctly', () => {
-      render(<InvoicesTable data={mockInvoices} />)
+      render(<InvoicesTable {...defaultProps} />)
 
       expect(screen.getByText('John Doe')).toBeInTheDocument()
       expect(screen.getByText('Jane Smith')).toBeInTheDocument()
@@ -151,7 +189,7 @@ describe('InvoicesTable', () => {
     })
 
     it('renders amounts correctly', () => {
-      render(<InvoicesTable data={mockInvoices} />)
+      render(<InvoicesTable {...defaultProps} />)
 
       expect(screen.getAllByText('160 €')).toHaveLength(2)
       expect(screen.getAllByText('40 €')).toHaveLength(3)
@@ -166,7 +204,7 @@ describe('InvoicesTable', () => {
     })
 
     it('renders paid amounts correctly', () => {
-      render(<InvoicesTable data={mockInvoices} />)
+      render(<InvoicesTable {...defaultProps} />)
 
       expect(screen.getAllByText('200 €')).toHaveLength(3)
 
@@ -177,7 +215,7 @@ describe('InvoicesTable', () => {
 
   describe('Invoice Status Display', () => {
     it('renders all status labels correctly', () => {
-      render(<InvoicesTable data={mockInvoices} />)
+      render(<InvoicesTable {...defaultProps} />)
 
       expect(screen.getByText('Payée')).toBeInTheDocument()
       expect(screen.getByText('En retard de paiement')).toBeInTheDocument()
@@ -187,7 +225,7 @@ describe('InvoicesTable', () => {
     })
 
     it('applies correct Bootstrap classes for different statuses', () => {
-      render(<InvoicesTable data={mockInvoices} />)
+      render(<InvoicesTable {...defaultProps} />)
 
       const statusCells = screen
         .getAllByRole('cell')
@@ -211,7 +249,7 @@ describe('InvoicesTable', () => {
     })
 
     it('applies overdue styling to deadline column', () => {
-      render(<InvoicesTable data={mockInvoices} />)
+      render(<InvoicesTable {...defaultProps} />)
 
       const deadlineCells = screen
         .getAllByRole('cell')
@@ -224,7 +262,7 @@ describe('InvoicesTable', () => {
     })
 
     it('applies due soon styling to deadline column', () => {
-      render(<InvoicesTable data={mockInvoices} />)
+      render(<InvoicesTable {...defaultProps} />)
 
       const deadlineCells = screen
         .getAllByRole('cell')
@@ -239,7 +277,7 @@ describe('InvoicesTable', () => {
 
   describe('Date Formatting', () => {
     it('formats dates correctly in French locale', () => {
-      render(<InvoicesTable data={mockInvoices} />)
+      render(<InvoicesTable {...defaultProps} />)
 
       const dateCells = screen
         .getAllByRole('cell')
@@ -251,58 +289,134 @@ describe('InvoicesTable', () => {
     })
 
     it('displays dash for null dates', () => {
-      render(<InvoicesTable data={mockInvoices} />)
+      render(<InvoicesTable {...defaultProps} />)
 
       const dashes = screen.getAllByText('-')
       expect(dashes.length).toBeGreaterThan(0)
     })
   })
 
-  describe('Action Buttons', () => {
-    it('renders edit button only for non-finalized invoices when onEdit is provided', () => {
-      render(<InvoicesTable data={mockInvoices} onEdit={mockOnEdit} />)
+  describe('View Button', () => {
+    it('renders view button for all invoices', () => {
+      render(<InvoicesTable {...defaultProps} />)
+
+      const viewButtons = screen.queryAllByRole('button', {
+        name: 'Voir la facture',
+      })
+      expect(viewButtons.length).toBe(5)
+
+      expect(viewButtons[0]).toHaveClass(
+        'btn',
+        'btn-sm',
+        'btn-outline-info',
+        'ms-2'
+      )
+      expect(viewButtons[0]).toHaveAttribute('title', 'Voir la facture')
+    })
+
+    it('calls onView when view button is clicked', () => {
+      render(<InvoicesTable {...defaultProps} />)
+
+      const viewButtons = screen.getAllByRole('button', {
+        name: 'Voir la facture',
+      })
+      fireEvent.click(viewButtons[0])
+
+      expect(mockOnView).toHaveBeenCalledWith(1)
+    })
+  })
+
+  describe('Edit Button Display', () => {
+    it('renders edit button only for unpaid invoices', () => {
+      render(<InvoicesTable {...defaultProps} />)
 
       const editButtons = screen.getAllByTitle('Modifier la facture')
       expect(editButtons.length).toBe(4)
 
+      expect(editButtons[0]).toHaveClass(
+        'btn',
+        'btn-sm',
+        'btn-outline-primary',
+        'ms-2'
+      )
+      expect(editButtons[0]).toHaveAttribute('title', 'Modifier la facture')
+    })
+
+    it('does not render edit button for paid invoices', () => {
+      render(
+        <InvoicesTable
+          {...defaultProps}
+          data={[
+            InvoiceWithCustomerTestDataFactory.createPaidInvoiceWithCustomer(),
+          ]}
+        />
+      )
+
+      const editButtonInFirstRow = screen.queryByRole('button', {
+        name: 'Modifier la facture',
+      })
+      expect(editButtonInFirstRow).not.toBeInTheDocument()
+    })
+
+    it('renders edit button with correct icon', () => {
+      render(<InvoicesTable {...defaultProps} />)
+
+      const editButtons = screen.getAllByTitle('Modifier la facture')
+      const icon = editButtons[0].querySelector('i')
+
+      expect(icon).toBeInTheDocument()
+      expect(icon).toHaveClass('bi', 'bi-pencil')
+    })
+
+    it('calls onEdit when edit button is clicked', () => {
+      render(<InvoicesTable {...defaultProps} />)
+
+      const editButtons = screen.getAllByTitle('Modifier la facture')
       fireEvent.click(editButtons[0])
+
       expect(mockOnEdit).toHaveBeenCalledWith(2)
     })
+  })
 
-    it('does not render edit button for finalized invoices', () => {
-      render(<InvoicesTable data={mockInvoices} onEdit={mockOnEdit} />)
-
-      const editButtons = screen.getAllByTitle('Modifier la facture')
-      expect(editButtons.length).toBe(4)
-    })
-
-    it('renders delete button only for non-finalized invoices when onDelete is provided', () => {
-      render(<InvoicesTable data={mockInvoices} onDelete={mockOnDelete} />)
+  describe('Delete Button Display', () => {
+    it('renders delete button only for unpaid invoices', () => {
+      render(<InvoicesTable {...defaultProps} />)
 
       const deleteButtons = screen.getAllByTitle('Supprimer la facture')
       expect(deleteButtons.length).toBe(4)
+
+      expect(deleteButtons[0]).toHaveClass(
+        'btn',
+        'btn-sm',
+        'btn-outline-danger',
+        'ms-2'
+      )
+      expect(deleteButtons[0]).toHaveAttribute('title', 'Supprimer la facture')
     })
 
-    it('does not render delete button for finalized invoices', () => {
-      render(<InvoicesTable data={mockInvoices} onDelete={mockOnDelete} />)
+    it('does not render delete button for paid invoices', () => {
+      render(<InvoicesTable {...defaultProps} />)
+
+      const firstRow = screen.getByText('#1').closest('tr')
+      const deleteButtonInFirstRow = firstRow?.querySelector(
+        '[title="Supprimer la facture"]'
+      )
+      expect(deleteButtonInFirstRow).not.toBeInTheDocument()
+    })
+
+    it('renders delete button with correct icon', () => {
+      render(<InvoicesTable {...defaultProps} />)
 
       const deleteButtons = screen.getAllByTitle('Supprimer la facture')
-      expect(deleteButtons.length).toBe(4)
-    })
+      const icon = deleteButtons[0].querySelector('i')
 
-    it('does not render action buttons when callbacks are not provided', () => {
-      render(<InvoicesTable data={mockInvoices} />)
-
-      const editButtons = screen.queryAllByTitle('Modifier la facture')
-      const deleteButtons = screen.queryAllByTitle('Supprimer la facture')
-
-      expect(editButtons).toHaveLength(0)
-      expect(deleteButtons).toHaveLength(0)
+      expect(icon).toBeInTheDocument()
+      expect(icon).toHaveClass('bi', 'bi-trash')
     })
 
     it('shows confirmation dialog when delete button is clicked', async () => {
       mockConfirm.mockReturnValue(true)
-      render(<InvoicesTable data={mockInvoices} onDelete={mockOnDelete} />)
+      render(<InvoicesTable {...defaultProps} />)
 
       const deleteButtons = screen.getAllByTitle('Supprimer la facture')
       fireEvent.click(deleteButtons[0])
@@ -314,7 +428,7 @@ describe('InvoicesTable', () => {
 
     it('calls onDelete when user confirms deletion', async () => {
       mockConfirm.mockReturnValue(true)
-      render(<InvoicesTable data={mockInvoices} onDelete={mockOnDelete} />)
+      render(<InvoicesTable {...defaultProps} />)
 
       const deleteButtons = screen.getAllByTitle('Supprimer la facture')
       fireEvent.click(deleteButtons[0])
@@ -326,7 +440,7 @@ describe('InvoicesTable', () => {
 
     it('does not call onDelete when user cancels deletion', async () => {
       mockConfirm.mockReturnValue(false)
-      render(<InvoicesTable data={mockInvoices} onDelete={mockOnDelete} />)
+      render(<InvoicesTable {...defaultProps} />)
 
       const deleteButtons = screen.getAllByTitle('Supprimer la facture')
       fireEvent.click(deleteButtons[0])
@@ -339,14 +453,14 @@ describe('InvoicesTable', () => {
 
   describe('Edge Cases', () => {
     it('handles invoices without customers correctly', () => {
-      render(<InvoicesTable data={mockInvoices} />)
+      render(<InvoicesTable {...defaultProps} />)
 
       const dashes = screen.getAllByText('-')
       expect(dashes.length).toBeGreaterThan(0)
     })
 
     it('handles invoices with null dates correctly', () => {
-      render(<InvoicesTable data={mockInvoices} />)
+      render(<InvoicesTable {...defaultProps} />)
 
       const dashes = screen.getAllByText('-')
       expect(dashes.length).toBeGreaterThan(0)
@@ -354,7 +468,7 @@ describe('InvoicesTable', () => {
 
     it('handles single invoice correctly', () => {
       const singleInvoice = [mockInvoices[0]]
-      render(<InvoicesTable data={singleInvoice} />)
+      render(<InvoicesTable {...defaultProps} data={singleInvoice} />)
 
       expect(screen.getByText('John Doe')).toBeInTheDocument()
       expect(screen.getByText('#1')).toBeInTheDocument()
@@ -384,11 +498,10 @@ describe('InvoicesTable', () => {
         })
       )
 
-      render(<InvoicesTable data={manyInvoices} />)
+      render(<InvoicesTable {...defaultProps} data={manyInvoices} />)
 
       expect(screen.getByText('Customer1 Test')).toBeInTheDocument()
       expect(screen.getByText('#100')).toBeInTheDocument()
     })
   })
 })
-

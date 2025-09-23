@@ -1,5 +1,4 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import { vi } from 'vitest'
 import InvoicesPagination from '../InvoicesPagination'
 
 vi.mock('react-bootstrap', () => ({

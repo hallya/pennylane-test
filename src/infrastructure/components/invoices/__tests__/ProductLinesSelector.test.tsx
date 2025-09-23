@@ -1,5 +1,4 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import { vi } from 'vitest'
 import { ProductLinesSelector } from '../ProductLinesSelector'
 import { ProductTestDataFactory } from '../../../../domain/__tests__/utils/productTestDataFactory'
 

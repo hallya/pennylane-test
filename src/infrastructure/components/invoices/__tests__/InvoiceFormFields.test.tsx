@@ -1,5 +1,4 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import { vi } from 'vitest'
 import { InvoiceFormFields } from '../InvoiceFormFields'
 
 vi.mock('react-hook-form', () => ({

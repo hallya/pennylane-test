@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
-import { vi } from 'vitest'
 import Invoices from '../Invoices'
 import { useInvoices } from '../../../../adapters/controllers'
 

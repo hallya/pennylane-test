@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react'
-import { vi } from 'vitest'
 import Dashboard from '../Dashboard'
 import { DashboardTestDataFactory } from '../../../__tests__/utils/dashboardTestDataFactory'
 import { useDashboard } from '../../../../adapters/controllers'

@@ -1,5 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { vi } from 'vitest'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { CustomerSelector } from '../CustomerSelector'
 import { CustomerTestDataFactory } from '../../../../domain/__tests__/utils/customerTestDataFactory'
 

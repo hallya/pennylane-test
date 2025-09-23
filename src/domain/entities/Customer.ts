@@ -21,8 +21,7 @@ export class CustomerEntity implements Customer {
     this.country_code = data.country_code;
   }
 
-  // Business methods
   getFullName(): string {
-    return `${this.first_name} ${this.last_name}`;
+    return `${this.first_name} ${this.last_name}`.trim();
   }
 }

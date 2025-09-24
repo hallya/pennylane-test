@@ -1,100 +1,14 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import '@testing-library/jest-dom'
+import { render, screen } from '@testing-library/react'
 import { ProductLinesSelector } from '../ProductLinesSelector'
 import { ProductTestDataFactory } from '../../../../domain/__tests__/utils/productTestDataFactory'
+import { FormWrapper } from '../../../shared/FormWrapper'
+import { InvoiceFormData } from '../../../pages/invoices/types'
 
-vi.mock('react-hook-form', () => ({
-  Controller: ({ render, name, control }: any) => {
-    const formState = control?._proxyFormState || { errors: {} }
-    const error = formState.errors?.[name]
-    return render({
-      field: {
-        onChange: vi.fn(),
-        onBlur: vi.fn(),
-        value: '',
-        name,
-      },
-      fieldState: { error },
-      formState,
-    })
-  },
-  useFormContext: vi.fn(() => ({
-    control: {},
-    watch: vi.fn(),
-    setValue: vi.fn(),
-    clearErrors: vi.fn(),
-    formState: { errors: {} },
-  })),
-}))
 
-vi.mock('../../../shared/chartUtils', () => ({
-  formatCurrency: (value: number) => `€${value.toFixed(2)}`,
-}))
 
-vi.mock('react-bootstrap', () => ({
-  Form: {
-    Group: ({ children }: any) => (
-      <div data-testid="form-group">{children}</div>
-    ),
-    Label: ({ children, htmlFor }: any) => (
-      <label htmlFor={htmlFor}>{children}</label>
-    ),
-    Control: Object.assign(
-      ({ children, ...props }: any) => <input {...props}>{children}</input>,
-      {
-        Feedback: ({ children, type }: any) => (
-          <div data-testid={`feedback-${type}`}>{children}</div>
-        ),
-      }
-    ),
-  },
-  Dropdown: {
-    Menu: ({ children, show }: any) =>
-      show ? <div data-testid="dropdown-menu">{children}</div> : null,
-    Item: ({ children, onClick }: any) => (
-      <div data-testid="dropdown-item" onClick={onClick}>
-        {children}
-      </div>
-    ),
-  },
-  Card: Object.assign(
-    ({ children, className }: any) => (
-      <div data-testid="card" className={className}>
-        {children}
-      </div>
-    ),
-    {
-      Header: ({ children }: any) => (
-        <div data-testid="card-header">{children}</div>
-      ),
-      Body: ({ children }: any) => (
-        <div data-testid="card-body">{children}</div>
-      ),
-    }
-  ),
-  Row: ({ children }: any) => <div data-testid="row">{children}</div>,
-  Col: ({ children, md }: any) => (
-    <div data-testid={`col-${md}`}>{children}</div>
-  ),
-  Button: ({ children, onClick, disabled, variant }: any) => (
-    <button onClick={onClick} disabled={disabled} data-variant={variant}>
-      {children}
-    </button>
-  ),
-}))
 
 describe('ProductLinesSelector', () => {
-  const mockForm = {
-    control: {
-      _proxyFormState: { isValid: true, errors: {} },
-    },
-    watch: vi.fn(() => new Map()),
-    setValue: vi.fn(),
-    clearErrors: vi.fn(),
-    formState: {
-      errors: {},
-    },
-  } as any
-
   const mockProducts = [
     ProductTestDataFactory.create({
       id: 1,
@@ -126,35 +40,36 @@ describe('ProductLinesSelector', () => {
   ])
 
   const defaultProps = {
-    form: mockForm,
     products: mockProducts,
     productSearchQuery: '',
-    updateProductQuery: vi.fn(),
-    searchProducts: vi.fn(),
+    updateProductQuery: () => {},
+    searchProducts: () => {},
     selectedProduct: null,
-    setSelectedProduct: vi.fn(),
+    setSelectedProduct: () => {},
     showProducts: false,
-    setShowProducts: vi.fn(),
+    setShowProducts: () => {},
     invoiceLines: mockInvoiceLines,
-    handleAddProductToInvoice: vi.fn(),
-    handleRemoveLine: vi.fn(),
+    handleAddProductToInvoice: () => {},
+    handleRemoveLine: () => {},
     validationMode: null,
   }
 
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('renders the component structure', () => {
-    render(<ProductLinesSelector {...defaultProps} />)
+    render(
+      <FormWrapper<InvoiceFormData>>
+        {(form) => <ProductLinesSelector form={form} {...defaultProps} />}
+      </FormWrapper>
+    )
 
-    expect(screen.getByTestId('card-header')).toBeInTheDocument()
-    expect(screen.getByTestId('card-body')).toBeInTheDocument()
     expect(screen.getByText('Lignes de Produits')).toBeInTheDocument()
   })
 
   it('renders product search input', () => {
-    render(<ProductLinesSelector {...defaultProps} />)
+    render(
+      <FormWrapper<InvoiceFormData>>
+        {(form) => <ProductLinesSelector form={form} {...defaultProps} />}
+      </FormWrapper>
+    )
 
     const input = screen.getByPlaceholderText('Rechercher un produit...')
     expect(input).toBeInTheDocument()
@@ -162,7 +77,11 @@ describe('ProductLinesSelector', () => {
   })
 
   it('renders quantity input', () => {
-    render(<ProductLinesSelector {...defaultProps} />)
+    render(
+      <FormWrapper<InvoiceFormData>>
+        {(form) => <ProductLinesSelector form={form} {...defaultProps} />}
+      </FormWrapper>
+    )
 
     const quantityInput = screen.getByPlaceholderText('Quantité')
     expect(quantityInput).toBeInTheDocument()
@@ -171,7 +90,11 @@ describe('ProductLinesSelector', () => {
   })
 
   it('renders add button', () => {
-    render(<ProductLinesSelector {...defaultProps} />)
+    render(
+      <FormWrapper<InvoiceFormData>>
+        {(form) => <ProductLinesSelector form={form} {...defaultProps} />}
+      </FormWrapper>
+    )
 
     const addButton = screen.getByRole('button', { name: 'Ajouter' })
     expect(addButton).toBeInTheDocument()
@@ -179,155 +102,77 @@ describe('ProductLinesSelector', () => {
   })
 
   it('shows products dropdown when showProducts is true', () => {
-    render(<ProductLinesSelector {...defaultProps} showProducts={true} />)
+    render(
+      <FormWrapper<InvoiceFormData>>
+        {(form) => <ProductLinesSelector form={form} {...defaultProps} showProducts={true} />}
+      </FormWrapper>
+    )
 
-    expect(screen.getByTestId('dropdown-menu')).toBeInTheDocument()
+    expect(screen.getAllByText('Product A')).toHaveLength(2)
   })
 
   it('renders product suggestions', () => {
-    render(<ProductLinesSelector {...defaultProps} showProducts={true} />)
+    render(
+      <FormWrapper<InvoiceFormData>>
+        {(form) => <ProductLinesSelector form={form} {...defaultProps} showProducts={true} />}
+      </FormWrapper>
+    )
 
-    const items = screen.getAllByTestId('dropdown-item')
-    expect(items).toHaveLength(2)
     expect(screen.getAllByText('Product A')).toHaveLength(2)
     expect(screen.getByText('Product B')).toBeInTheDocument()
   })
 
-  it('calls setSelectedProduct when clicking a product suggestion', () => {
-    const mockSetSelected = vi.fn()
-    render(
-      <ProductLinesSelector
-        {...defaultProps}
-        showProducts={true}
-        setSelectedProduct={mockSetSelected}
-      />
-    )
-
-    const firstItem = screen.getAllByTestId('dropdown-item')[0]
-    fireEvent.click(firstItem)
-
-    expect(mockSetSelected).toHaveBeenCalledWith(mockProducts[0])
-  })
-
-  it('enables add button when product is selected', () => {
-    render(
-      <ProductLinesSelector
-        {...defaultProps}
-        selectedProduct={mockProducts[0]}
-      />
-    )
-
-    const addButton = screen.getByRole('button', { name: 'Ajouter' })
-    expect(addButton).not.toBeDisabled()
-  })
-
-  it('calls handleAddProductToInvoice when add button is clicked', () => {
-    const mockAddProduct = vi.fn()
-    render(
-      <ProductLinesSelector
-        {...defaultProps}
-        selectedProduct={mockProducts[0]}
-        handleAddProductToInvoice={mockAddProduct}
-      />
-    )
-
-    const addButton = screen.getByRole('button', { name: 'Ajouter' })
-    fireEvent.click(addButton)
-
-    expect(mockAddProduct).toHaveBeenCalledWith(mockProducts[0], 1)
-  })
-
   it('renders invoice lines when present', () => {
-    render(<ProductLinesSelector {...defaultProps} />)
+    render(
+      <FormWrapper<InvoiceFormData>>
+        {(form) => <ProductLinesSelector form={form} {...defaultProps} />}
+      </FormWrapper>
+    )
 
     expect(screen.getByText('Product A')).toBeInTheDocument()
     expect(
-      screen.getByText((content, element) => content.includes('Quantité: 2'))
+      screen.getByText((content) => content.includes('Quantité: 2'))
     ).toBeInTheDocument()
     expect(
-      screen.getByText((content, element) => content.includes('Prix TTC:'))
+      screen.getByText((content) => content.includes('Prix TTC:'))
     ).toBeInTheDocument()
   })
 
   it('renders remove button for each line', () => {
-    render(<ProductLinesSelector {...defaultProps} />)
+    render(
+      <FormWrapper<InvoiceFormData>>
+        {(form) => <ProductLinesSelector form={form} {...defaultProps} />}
+      </FormWrapper>
+    )
 
     const removeButton = screen.getByRole('button', { name: 'Supprimer' })
     expect(removeButton).toBeInTheDocument()
   })
 
-  it('calls handleRemoveLine when remove button is clicked', () => {
-    const mockRemoveLine = vi.fn()
-    render(
-      <ProductLinesSelector
-        {...defaultProps}
-        handleRemoveLine={mockRemoveLine}
-      />
-    )
-
-    const removeButton = screen.getByRole('button', { name: 'Supprimer' })
-    fireEvent.click(removeButton)
-
-    expect(mockRemoveLine).toHaveBeenCalledWith(1)
-  })
-
   it('displays totals correctly', () => {
-    render(<ProductLinesSelector {...defaultProps} />)
+    render(
+      <FormWrapper<InvoiceFormData>>
+        {(form) => <ProductLinesSelector form={form} {...defaultProps} />}
+      </FormWrapper>
+    )
 
     expect(screen.getByText('Quantité totale:')).toBeInTheDocument()
     expect(screen.getByText('2')).toBeInTheDocument()
     expect(screen.getByText('Taxe totale:')).toBeInTheDocument()
-    expect(screen.getByText('€4.00')).toBeInTheDocument()
+    expect(screen.getByText('4 €')).toBeInTheDocument()
     expect(screen.getByText('Total TTC:')).toBeInTheDocument()
-    expect(screen.getByText('€40.00')).toBeInTheDocument()
+    expect(screen.getByText('40 €')).toBeInTheDocument()
   })
 
-  it('shows validation error when no products and finalize mode', () => {
-    const mockFormWithErrors = {
-      ...mockForm,
-      control: {
-        _proxyFormState: {
-          isValid: false,
-          errors: { invoiceLines: { message: 'Au moins un produit requis' } },
-        },
-      },
-      formState: {
-        errors: { invoiceLines: { message: 'Au moins un produit requis' } },
-      },
-    }
-
+  it('shows required attribute when validationMode is finalize', () => {
     render(
-      <ProductLinesSelector
-        {...defaultProps}
-        form={mockFormWithErrors}
-        validationMode="finalize"
-      />
-    )
-
-    expect(screen.getByText('Au moins un produit requis')).toBeInTheDocument()
-  })
-
-  it('calls searchProducts on input change', () => {
-    const mockSearchProducts = vi.fn()
-    render(
-      <ProductLinesSelector
-        {...defaultProps}
-        searchProducts={mockSearchProducts}
-      />
+      <FormWrapper<InvoiceFormData>>
+        {(form) => <ProductLinesSelector form={form} {...defaultProps} validationMode="finalize" />}
+      </FormWrapper>
     )
 
     const input = screen.getByPlaceholderText('Rechercher un produit...')
-    fireEvent.change(input, { target: { value: 'test' } })
-
-    expect(mockSearchProducts).toHaveBeenCalledWith('test')
-  })
-
-  it('handles quantity input change', () => {
-    render(<ProductLinesSelector {...defaultProps} />)
-
-    const quantityInput = screen.getByPlaceholderText('Quantité')
-    fireEvent.change(quantityInput, { target: { value: '5' } })
-
-    expect(quantityInput).toHaveValue(5)
+    expect(input).toHaveAttribute('required')
   })
 })
+

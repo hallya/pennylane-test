@@ -15,7 +15,7 @@ vi.mock('chart.js', () => ({
 }))
 
 vi.mock('react-chartjs-2', () => ({
-  Bar: ({ data, options }: any) => (
+  Bar: ({ data, options }: Record<string, unknown>) => (
     <div
       data-testid="bar-chart"
       data-data={JSON.stringify(data)}
@@ -50,3 +50,4 @@ Object.defineProperty(window, 'ResizeObserver', {
     disconnect: vi.fn(),
   })),
 })
+

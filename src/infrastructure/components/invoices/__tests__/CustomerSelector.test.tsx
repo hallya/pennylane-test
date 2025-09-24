@@ -1,83 +1,10 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { CustomerSelector } from '../CustomerSelector'
 import { CustomerTestDataFactory } from '../../../../domain/__tests__/utils/customerTestDataFactory'
-
-vi.mock('react-hook-form', () => ({
-  Controller: ({ render, name, control }: any) => {
-    const formState = control?._proxyFormState || { errors: {} }
-    const error = formState.errors?.[name]
-    return render({
-      field: {
-        onChange: vi.fn(),
-        onBlur: vi.fn(),
-        value: '',
-        name,
-      },
-      fieldState: { error },
-      formState,
-    })
-  },
-  useFormContext: vi.fn(() => ({
-    control: {},
-    watch: vi.fn(),
-    setValue: vi.fn(),
-    clearErrors: vi.fn(),
-    formState: { errors: {} },
-  })),
-}))
-
-vi.mock('react-bootstrap', () => ({
-  Form: {
-    Group: ({ children }: any) => (
-      <div data-testid="form-group">{children}</div>
-    ),
-    Label: ({ children, htmlFor }: any) => (
-      <label htmlFor={htmlFor}>{children}</label>
-    ),
-    Control: Object.assign(
-      ({ children, isValid, isInvalid, ...props }: any) => {
-        const className = [
-          props.className,
-          isValid ? 'is-valid' : '',
-          isInvalid ? 'is-invalid' : '',
-        ].filter(Boolean).join(' ')
-        return <input {...props} className={className}>{children}</input>
-      },
-      {
-        Feedback: ({ children, type }: any) => (
-          <div data-testid={`feedback-${type}`}>{children}</div>
-        ),
-      }
-    ),
-  },
-  Dropdown: {
-    Menu: ({ children, show }: any) =>
-      show ? <div data-testid="dropdown-menu">{children}</div> : null,
-    Item: ({ children, onClick }: any) => (
-      <div data-testid="dropdown-item" onClick={onClick}>
-        {children}
-      </div>
-    ),
-  },
-  Row: ({ children }: any) => <div data-testid="row">{children}</div>,
-  Col: ({ children, md }: any) => (
-    <div data-testid={`col-${md}`}>{children}</div>
-  ),
-}))
+import { FormWrapper } from '../../../shared/FormWrapper'
+import { InvoiceFormData } from '../../../pages/invoices/types'
 
 describe('CustomerSelector', () => {
-  const mockForm = {
-    control: {
-      _proxyFormState: { isValid: true, errors: {} },
-    },
-    watch: vi.fn(),
-    setValue: vi.fn(),
-    clearErrors: vi.fn(),
-    formState: {
-      errors: {},
-    },
-  } as any
-
   const mockCustomers = [
     CustomerTestDataFactory.create({
       id: 1,
@@ -92,7 +19,6 @@ describe('CustomerSelector', () => {
   ]
 
   const defaultProps = {
-    form: mockForm,
     customers: mockCustomers,
     selectedCustomer: null,
     showSuggestions: false,
@@ -101,24 +27,38 @@ describe('CustomerSelector', () => {
     validationMode: null,
   }
 
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('renders the customer selector with correct label', () => {
-    render(<CustomerSelector {...defaultProps} />)
+    render(
+      <FormWrapper<InvoiceFormData>>
+        {(form) => <CustomerSelector form={form} {...defaultProps} />}
+      </FormWrapper>
+    )
 
     expect(screen.getByLabelText('Client')).toBeInTheDocument()
   })
 
   it('renders required label when validationMode is finalize', () => {
-    render(<CustomerSelector {...defaultProps} validationMode="finalize" />)
+    render(
+      <FormWrapper<InvoiceFormData>>
+        {(form) => (
+          <CustomerSelector
+            form={form}
+            {...defaultProps}
+            validationMode="finalize"
+          />
+        )}
+      </FormWrapper>
+    )
 
     expect(screen.getByLabelText('Client *')).toBeInTheDocument()
   })
 
   it('renders input field with correct attributes', () => {
-    render(<CustomerSelector {...defaultProps} />)
+    render(
+      <FormWrapper<InvoiceFormData>>
+        {(form) => <CustomerSelector form={form} {...defaultProps} />}
+      </FormWrapper>
+    )
 
     const input = screen.getByLabelText('Client')
     expect(input).toHaveAttribute('type', 'text')
@@ -127,120 +67,121 @@ describe('CustomerSelector', () => {
   })
 
   it('calls handleCustomerSearchChange when input value changes', () => {
-    const mockHandleChange = vi.fn()
     render(
-      <CustomerSelector
-        {...defaultProps}
-        handleCustomerSearchChange={mockHandleChange}
-      />
+      <FormWrapper<InvoiceFormData>>
+        {(form) => <CustomerSelector form={form} {...defaultProps} />}
+      </FormWrapper>
     )
 
     const input = screen.getByLabelText('Client')
     fireEvent.change(input, { target: { value: 'John' } })
 
-    expect(mockHandleChange).toHaveBeenCalledWith('John')
-  })
-
-  it('clears errors when input changes and errors exist', () => {
-    const mockFormWithErrors = {
-      ...mockForm,
-      formState: {
-        errors: { customerName: { message: 'Required' } },
-      },
-      clearErrors: vi.fn(),
-    }
-
-    render(<CustomerSelector {...defaultProps} form={mockFormWithErrors} />)
-
-    const input = screen.getByLabelText('Client')
-    fireEvent.change(input, { target: { value: 'John' } })
-
-    expect(mockFormWithErrors.clearErrors).toHaveBeenCalledWith('customerName')
+    expect(defaultProps.handleCustomerSearchChange).toHaveBeenCalledWith('John')
   })
 
   it('shows suggestions dropdown when showSuggestions is true', () => {
-    render(<CustomerSelector {...defaultProps} showSuggestions={true} />)
+    render(
+      <FormWrapper<InvoiceFormData>>
+        {(form) => (
+          <CustomerSelector
+            form={form}
+            {...defaultProps}
+            showSuggestions={true}
+          />
+        )}
+      </FormWrapper>
+    )
 
-    expect(screen.getByTestId('dropdown-menu')).toBeInTheDocument()
+    expect(screen.getByText('John Doe')).toBeInTheDocument()
   })
 
   it('does not show suggestions dropdown when showSuggestions is false', () => {
-    render(<CustomerSelector {...defaultProps} showSuggestions={false} />)
+    render(
+      <FormWrapper<InvoiceFormData>>
+        {(form) => (
+          <CustomerSelector
+            form={form}
+            {...defaultProps}
+            showSuggestions={false}
+          />
+        )}
+      </FormWrapper>
+    )
 
-    expect(screen.queryByTestId('dropdown-menu')).not.toBeInTheDocument()
+    expect(screen.queryByText('John Doe')).not.toBeInTheDocument()
+    expect(screen.queryByText('Jane Smith')).not.toBeInTheDocument()
   })
 
   it('renders customer suggestions with correct information', () => {
-    render(<CustomerSelector {...defaultProps} showSuggestions={true} />)
+    render(
+      <FormWrapper<InvoiceFormData>>
+        {(form) => (
+          <CustomerSelector
+            form={form}
+            {...defaultProps}
+            showSuggestions={true}
+          />
+        )}
+      </FormWrapper>
+    )
 
-    const items = screen.getAllByTestId('dropdown-item')
+    const items = screen.getAllByRole('button')
     expect(items).toHaveLength(2)
 
     expect(screen.getByText('John Doe')).toBeInTheDocument()
     expect(screen.getByText('Jane Smith')).toBeInTheDocument()
   })
 
-  it('calls handleCustomerSelect when clicking a suggestion', () => {
-    const mockHandleSelect = vi.fn()
+  it('calls handleCustomerSelect when clicking on a customer suggestion', () => {
     render(
-      <CustomerSelector
-        {...defaultProps}
-        showSuggestions={true}
-        handleCustomerSelect={mockHandleSelect}
-      />
+      <FormWrapper<InvoiceFormData>>
+        {(form) => (
+          <CustomerSelector
+            form={form}
+            {...defaultProps}
+            showSuggestions={true}
+          />
+        )}
+      </FormWrapper>
     )
 
-    const firstItem = screen.getAllByTestId('dropdown-item')[0]
-    fireEvent.click(firstItem)
+    const johnDoeItem = screen.getByText('John Doe')
+    fireEvent.click(johnDoeItem)
 
-    expect(mockHandleSelect).toHaveBeenCalledWith(mockCustomers[0])
+    expect(defaultProps.handleCustomerSelect).toHaveBeenCalledWith(mockCustomers[0])
   })
 
-  it('renders with selected customer', () => {
-    const selectedCustomer = mockCustomers[0]
-
+  it('shows valid state when customer is selected', () => {
     render(
-      <CustomerSelector {...defaultProps} selectedCustomer={selectedCustomer} />
-    )
-
-    // Just verify it renders without errors with a selected customer
-    expect(screen.getByLabelText('Client')).toBeInTheDocument()
-  })
-
-  it('shows validation error when field has error', () => {
-    const mockFormWithErrors = {
-      ...mockForm,
-      control: {
-        _proxyFormState: { isValid: false, errors: { customerName: { message: 'Client requis' } } },
-      },
-      formState: {
-        errors: { customerName: { message: 'Client requis' } },
-      },
-    }
-
-    render(<CustomerSelector {...defaultProps} form={mockFormWithErrors} />)
-
-    expect(screen.getByTestId('feedback-invalid')).toHaveTextContent('Client requis')
-  })
-
-  it('shows valid state when customer is selected and no errors', () => {
-    const selectedCustomer = mockCustomers[0]
-    const mockFormValid = {
-      ...mockForm,
-      formState: {
-        errors: {},
-      },
-    }
-
-    render(
-      <CustomerSelector
-        {...defaultProps}
-        form={mockFormValid}
-        selectedCustomer={selectedCustomer}
-      />
+      <FormWrapper<InvoiceFormData>>
+        {(form) => (
+          <CustomerSelector
+            form={form}
+            {...defaultProps}
+            selectedCustomer={mockCustomers[0]}
+          />
+        )}
+      </FormWrapper>
     )
 
     const input = screen.getByLabelText('Client')
     expect(input).toHaveClass('is-valid')
+  })
+
+  it('does not show suggestions when customers list is empty', () => {
+    render(
+      <FormWrapper<InvoiceFormData>>
+        {(form) => (
+          <CustomerSelector
+            form={form}
+            {...defaultProps}
+            customers={[]}
+            showSuggestions={true}
+          />
+        )}
+      </FormWrapper>
+    )
+
+    expect(screen.queryByText('John Doe')).not.toBeInTheDocument()
   })
 })

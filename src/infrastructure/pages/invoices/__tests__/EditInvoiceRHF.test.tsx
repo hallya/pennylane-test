@@ -6,7 +6,7 @@ import { CustomerTestDataFactory } from '../../../../domain/__tests__/utils/cust
 import { ProductTestDataFactory } from '../../../../domain/__tests__/utils/productTestDataFactory'
 
 const mockHistoryBack = vi.fn()
-const mockUseParams = vi.fn(() => ({ id: '123' }))
+let mockParamsId = '123'
 
 Object.defineProperty(window, 'history', {
   value: {
@@ -16,63 +16,24 @@ Object.defineProperty(window, 'history', {
 })
 
 vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom')
+  const actual = await vi.importActual('react-router-dom');
   return {
     ...actual,
-    useParams: mockUseParams,
-    useNavigate: vi.fn(),
-    useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()]),
+    useParams: () => ({
+      id: mockParamsId,
+    }),
   }
 })
 
-vi.mock('../../../components/hooks', () => ({
+vi.mock('../../../components/hooks/useInvoiceForm', () => ({
   useInvoiceForm: vi.fn(),
-  useFormManager: vi.fn(() => ({
-    form: {
-      watch: vi.fn(() => []),
-      control: {},
-      handleSubmit: vi.fn((callback) => () => callback({})),
-      setValue: vi.fn(),
-      clearErrors: vi.fn(),
-      getValues: vi.fn(),
-      getFieldState: vi.fn(),
-      setError: vi.fn(),
-      trigger: vi.fn(),
-      reset: vi.fn(),
-      resetField: vi.fn(),
-      unregister: vi.fn(),
-      formState: {
-        errors: {},
-        isValid: true,
-        isDirty: false,
-        isSubmitted: false,
-      },
-    },
-  })),
-  useDebouncedSearch: vi.fn(() => ({
-    query: '',
-    updateQuery: vi.fn(),
-  })),
-}))
-
-vi.mock('../../../../api', () => ({
-  useApi: vi.fn(() => ({})),
-}))
-
-vi.mock('../../../components/hooks/useToast', () => ({
-  useToast: vi.fn(() => ({
-    showToast: vi.fn(),
-  })),
 }))
 
 vi.mock('../../../components/invoices', () => ({
   CustomerSelector: ({
-    form,
     customers,
     selectedCustomer,
     showSuggestions,
-    handleCustomerSearchChange,
-    handleCustomerSelect,
     validationMode,
   }: any) => (
     <div
@@ -87,7 +48,7 @@ vi.mock('../../../components/invoices', () => ({
       CustomerSelector
     </div>
   ),
-  InvoiceFormFields: ({ form, validationMode }: any) => (
+  InvoiceFormFields: ({ validationMode }: any) => (
     <div
       data-testid="invoice-form-fields"
       data-validation-mode={validationMode}
@@ -96,18 +57,11 @@ vi.mock('../../../components/invoices', () => ({
     </div>
   ),
   ProductLinesSelector: ({
-    form,
     products,
     productSearchQuery,
-    updateProductQuery,
-    searchProducts,
     selectedProduct,
-    setSelectedProduct,
     showProducts,
-    setShowProducts,
     invoiceLines,
-    handleAddProductToInvoice,
-    handleRemoveLine,
     validationMode,
   }: any) => (
     <div
@@ -126,36 +80,8 @@ vi.mock('../../../components/invoices', () => ({
   ),
 }))
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom')
-  return {
-    ...actual,
-    useParams: vi.fn(() => ({ id: '123' })),
-    useNavigate: vi.fn(),
-  }
-})
-
 describe('EditInvoiceRHF', () => {
-  const mockForm = {
-    control: {},
-    handleSubmit: vi.fn(),
-    watch: vi.fn(),
-    setValue: vi.fn(),
-    clearErrors: vi.fn(),
-    getValues: vi.fn(),
-    getFieldState: vi.fn(),
-    setError: vi.fn(),
-    trigger: vi.fn(),
-    reset: vi.fn(),
-    resetField: vi.fn(),
-    unregister: vi.fn(),
-    formState: {
-      errors: {},
-      isValid: true,
-      isDirty: false,
-      isSubmitted: false,
-    },
-  } as any
+  const mockForm = {} as any
 
   const mockCustomers = [CustomerTestDataFactory.create()]
   const mockProducts = [ProductTestDataFactory.create()]
@@ -196,15 +122,7 @@ describe('EditInvoiceRHF', () => {
   })
 
   const renderComponent = (invoiceId: string = '123') => {
-    // Mock react-router-dom with the specific invoice ID
-    vi.doMock('react-router-dom', async () => {
-      const actual = await vi.importActual('react-router-dom')
-      return {
-        ...actual,
-        useParams: vi.fn(() => ({ id: invoiceId })),
-        useNavigate: vi.fn(),
-      }
-    })
+    mockParamsId = invoiceId
 
     return render(
       <MemoryRouter>

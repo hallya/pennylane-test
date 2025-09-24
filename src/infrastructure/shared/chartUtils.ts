@@ -5,26 +5,26 @@
  * @returns Formatted string with appropriate scaling and € symbol
  */
 export const formatChartValue = (value: number, maxValue?: number): string => {
-  const absValue = Math.abs(value);
+  const absValue = Math.abs(value)
 
   if (maxValue) {
     if (maxValue >= 1_000_000) {
-      return `${(value / 1_000_000).toFixed(1)}M€`;
+      return `${(value / 1_000_000).toFixed(1)}M€`
     } else if (maxValue >= 1_0000) {
-      return `${(value / 1_000).toFixed(0)}k€`;
+      return `${(value / 1_000).toFixed(0)}k€`
     } else if (maxValue >= 1_000) {
-      return `${(value / 1_000).toFixed(1)}k€`;
+      return `${(value / 1_000).toFixed(1)}k€`
     }
   } else {
     if (absValue >= 1_000_000) {
-      return `${(value / 1_000_000).toFixed(1)}M€`;
+      return `${(value / 1_000_000).toFixed(1)}M€`
     } else if (absValue >= 1_000) {
-      return `${(value / 1_000).toFixed(1)}k€`;
+      return `${(value / 1_000).toFixed(1)}k€`
     }
   }
 
-  return `${value}€`;
-};
+  return `${value}€`
+}
 
 /**
  * Formats a number as currency for tooltips
@@ -37,8 +37,8 @@ export const formatCurrency = (value: number): string => {
     currency: 'EUR',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(value);
-};
+  }).format(value)
+}
 
 /**
  * Formats a number as plain number for charts (no units)
@@ -47,26 +47,26 @@ export const formatCurrency = (value: number): string => {
  * @returns Formatted plain number string
  */
 export const formatPlainNumber = (value: number, maxValue?: number): string => {
-  const absValue = Math.abs(value);
+  const absValue = Math.abs(value)
 
   if (maxValue) {
     if (maxValue >= 1_000_000) {
-      return `${(value / 1_000_000).toFixed(1)}M`;
+      return `${(value / 1_000_000).toFixed(1)}M`
     } else if (maxValue >= 10_000) {
-      return `${(value / 1_000).toFixed(0)}k`;
+      return `${(value / 1_000).toFixed(0)}k`
     } else if (maxValue >= 1_000) {
-      return `${(value / 1_000).toFixed(1)}k`;
+      return `${(value / 1_000).toFixed(1)}k`
     }
   } else {
     if (absValue >= 1_000_000) {
-      return `${(value / 1_000_000).toFixed(1)}M`;
+      return `${(value / 1_000_000).toFixed(1)}M`
     } else if (absValue >= 1_000) {
-      return `${(value / 1_000).toFixed(1)}k`;
+      return `${(value / 1_000).toFixed(1)}k`
     }
   }
 
-  return value.toString();
-};
+  return value.toString()
+}
 
 /**
  * Formats a number as percentage for charts
@@ -74,8 +74,8 @@ export const formatPlainNumber = (value: number, maxValue?: number): string => {
  * @returns Formatted percentage string
  */
 export const formatPercentage = (value: number): string => {
-  return `${(value * 100).toFixed(1)}%`;
-};
+  return `${(value * 100).toFixed(1)}%`
+}
 
 /**
  * Formats a number as days for charts
@@ -83,23 +83,22 @@ export const formatPercentage = (value: number): string => {
  * @returns Formatted days string
  */
 export const formatDays = (value: number): string => {
-  return `${value} j`;
-};
-
+  return `${value} j`
+}
 
 /**
  * Consistent color palette for all dashboard charts
  */
 export const CHART_COLORS = {
-  primary: '#0d6efd',    
-  secondary: '#6c757d',  
-  success: '#198754',    
-  info: '#0dcaf0',       
-  warning: '#ffc107',    
-  danger: '#dc3545',     
-  light: '#f8f9fa',      
-  dark: '#212529',       
-} as const;
+  primary: '#0d6efd',
+  secondary: '#6c757d',
+  success: '#198754',
+  info: '#0dcaf0',
+  warning: '#ffc107',
+  danger: '#dc3545',
+  light: '#f8f9fa',
+  dark: '#212529',
+} as const
 
 /**
  * Array of colors for multiple data points
@@ -111,4 +110,4 @@ export const CHART_COLOR_PALETTE = [
   CHART_COLORS.info,
   CHART_COLORS.warning,
   CHART_COLORS.danger,
-] as const;
+] as const

@@ -47,12 +47,9 @@ vi.mock('../../../components/hooks/useToast', () => ({
 
 vi.mock('../../../components/invoices', () => ({
   CustomerSelector: ({
-    form,
     customers,
     selectedCustomer,
     showSuggestions,
-    handleCustomerSearchChange,
-    handleCustomerSelect,
     validationMode,
   }: any) => (
     <div
@@ -67,7 +64,7 @@ vi.mock('../../../components/invoices', () => ({
       CustomerSelector
     </div>
   ),
-  InvoiceFormFields: ({ form, validationMode }: any) => (
+  InvoiceFormFields: ({ validationMode }: any) => (
     <div
       data-testid="invoice-form-fields"
       data-validation-mode={validationMode}
@@ -76,18 +73,11 @@ vi.mock('../../../components/invoices', () => ({
     </div>
   ),
   ProductLinesSelector: ({
-    form,
     products,
     productSearchQuery,
-    updateProductQuery,
-    searchProducts,
     selectedProduct,
-    setSelectedProduct,
     showProducts,
-    setShowProducts,
     invoiceLines,
-    handleAddProductToInvoice,
-    handleRemoveLine,
     validationMode,
   }: any) => (
     <div

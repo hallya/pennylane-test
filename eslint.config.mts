@@ -4,6 +4,9 @@ import tseslint from 'typescript-eslint'
 import pluginReact from 'eslint-plugin-react'
 
 export default [
+  {
+    ignores: ['build/**', 'src/api/gen/**'],
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
@@ -13,6 +16,14 @@ export default [
     settings: { react: { version: 'detect' } },
     rules: {
       'react/react-in-jsx-scope': 'off',
+      'react/prop-types': 'off',
+    },
+  },
+  {
+    files: ['bin/**', '.lintstagedrc.js'],
+    languageOptions: { globals: globals.node },
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
     },
   },
   {

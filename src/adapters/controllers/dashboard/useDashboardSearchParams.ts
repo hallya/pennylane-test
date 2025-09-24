@@ -18,7 +18,6 @@ export const useDashboardSearchParams = () => {
       prev.set('deadlineComplianceDays', days.toString());
       return prev;
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getParams = useMemo((): DashboardSearchParams => ({
@@ -32,7 +31,6 @@ export const useDashboardSearchParams = () => {
       }
       return prev;
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {

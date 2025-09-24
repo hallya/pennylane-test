@@ -18,7 +18,7 @@ vi.mock('../../components', () => ({
       Table with {data?.length || 0} invoices
     </div>
   ),
-  InvoicesPagination: ({ currentPage, totalPages, onPageChange }: any) => (
+  InvoicesPagination: ({ currentPage, totalPages }: any) => (
     <div data-testid="invoices-pagination">
       Pagination: page {currentPage} of {totalPages}
     </div>

@@ -1,4 +1,3 @@
-import React from 'react'
 import { InvoiceEntity } from '../../../domain/entities'
 import {
   INVOICE_STATUS_LABELS,
@@ -8,6 +7,7 @@ import {
 } from '../../../domain/constants'
 import { formatCurrency } from '../../shared/chartUtils'
 import InvoicesTableHeader from './InvoicesTableHeader'
+import { memo } from 'react'
 
 export interface InvoicesTableProps {
   data: InvoiceEntity[]
@@ -17,8 +17,7 @@ export interface InvoicesTableProps {
   onCustomerClick?: (customerId: number) => void
 }
 
-const InvoicesTable: React.FC<InvoicesTableProps> = React.memo(
-  ({ data, onDelete, onEdit, onView, onCustomerClick }) => {
+const InvoicesTableComponent: React.FC<InvoicesTableProps> = ({ data, onDelete, onEdit, onView, onCustomerClick }) => {
     const formatDate = (dateString: string | null) => {
       if (!dateString) return '-'
       return new Date(dateString).toLocaleDateString('fr-FR')
@@ -154,7 +153,10 @@ const InvoicesTable: React.FC<InvoicesTableProps> = React.memo(
         </table>
       </div>
     )
-  }
-)
+}
+
+InvoicesTableComponent.displayName = 'InvoicesTable'
+
+const InvoicesTable = memo(InvoicesTableComponent)
 
 export default InvoicesTable

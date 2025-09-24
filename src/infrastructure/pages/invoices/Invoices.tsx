@@ -1,14 +1,14 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, memo } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Button } from 'react-bootstrap'
 import { useInvoices, useDeleteInvoice } from '../../../adapters/controllers'
 import { InvoicesTable, InvoicesPagination } from '../../components'
 import FilterBadge from '../../components/invoices/FilterBadge'
 
-const InvoicesFilter: React.FC<{
+const InvoicesFilterComponent: React.FC<{
   customerId?: number
   onRemoveFilter: () => void
-}> = React.memo(({ customerId, onRemoveFilter }) => {
+}> = ({ customerId, onRemoveFilter }) => {
   const { data } = useInvoices({
     page: 1,
     perPage: 1,
@@ -27,7 +27,11 @@ const InvoicesFilter: React.FC<{
       onRemove={onRemoveFilter}
     />
   )
-})
+}
+
+InvoicesFilterComponent.displayName = 'InvoicesFilter'
+
+const InvoicesFilter = memo(InvoicesFilterComponent)
 
 const Invoices: React.FC = () => {
   const navigate = useNavigate()
@@ -64,7 +68,9 @@ const Invoices: React.FC = () => {
       try {
         await deleteInvoice(id)
         refetch()
-      } catch (error) {}
+      } catch {
+        // Error handling is done by the mutation hook
+      }
     },
     [deleteInvoice, refetch]
   )

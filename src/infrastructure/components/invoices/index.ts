@@ -1,5 +1,4 @@
 export { InvoiceFormFields } from './InvoiceFormFields'
-export { FormWrapper } from '../../shared/FormWrapper'
 export { CustomerSelector } from './CustomerSelector'
 export { ProductLinesSelector } from './ProductLinesSelector'
 export { default as InvoicesTable } from './InvoicesTable'

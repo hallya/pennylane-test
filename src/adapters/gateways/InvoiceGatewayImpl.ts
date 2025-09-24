@@ -6,7 +6,7 @@ export class InvoiceGatewayImpl implements InvoiceGateway {
   constructor(private api: Client) {}
 
   async getAllInvoices(page?: number, perPage?: number, customerId?: number): Promise<PaginatedInvoices> {
-    const params: any = {};
+    const params: Record<string, unknown> = {};
     if (page !== undefined) params.page = page;
     if (perPage !== undefined) params.per_page = perPage;
 
@@ -23,7 +23,7 @@ export class InvoiceGatewayImpl implements InvoiceGateway {
   }
 
   async getFinalizedInvoices(page?: number, perPage?: number): Promise<PaginatedInvoices> {
-    const params: any = {};
+    const params: Record<string, unknown> = {};
     if (page !== undefined) params.page = page;
     if (perPage !== undefined) params.per_page = perPage;
 

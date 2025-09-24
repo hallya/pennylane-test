@@ -24,7 +24,7 @@ export const ApiProvider: React.FC<ApiProviderProps> = ({
 }) => {
   const apiRef = useRef(
     new OpenAPIClientAxios({
-      /* @ts-ignore */
+      /* @ts-expect-error - Definition is generated and may not match exact typing */
       definition,
       withServer: { url },
       axiosConfigDefaults: {

@@ -68,8 +68,6 @@ const InvoiceView: React.FC = () => {
     )
   }
 
-  const status = invoice.getStatus()
-
   return (
     <main className="container-fluid mt-4" role="main">
       <Container>
@@ -127,11 +125,11 @@ const InvoiceView: React.FC = () => {
                       </Card.Header>
                       <Card.Body>
                         <p className="mb-2">
-                          <strong>Date d'émission:</strong>{' '}
+                          <strong>Date d&apos;émission:</strong>{' '}
                           {formatDate(invoice.date)}
                         </p>
                         <p className="mb-2">
-                          <strong>Date d'échéance:</strong>{' '}
+                          <strong>Date d&apos;échéance:</strong>{' '}
                           {formatDate(invoice.deadline)}
                         </p>
                         <p className="mb-2">

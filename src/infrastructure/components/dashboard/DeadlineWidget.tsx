@@ -34,8 +34,7 @@ interface DeadlineWidgetProps {
   data: DeadlineData
 }
 
-export const DeadlineWidget: React.FC<DeadlineWidgetProps> = React.memo(
-  (props: DeadlineWidgetProps) => {
+const DeadlineWidgetComponent: React.FC<DeadlineWidgetProps> = (props: DeadlineWidgetProps) => {
     const { deadlineComplianceDays, setDeadlineComplianceDays } =
       useDashboardSearchParams()
     const { data } = props;
@@ -59,7 +58,7 @@ export const DeadlineWidget: React.FC<DeadlineWidgetProps> = React.memo(
         title: 'Montant (€)',
         grid: true,
       })
-      .withTooltipFormatter((context: any) => {
+      .withTooltipFormatter((context: { parsed: { x: number; y: number } }) => {
         const days = context.parsed.x
         const amount = context.parsed.y
         const rtf = new Intl.RelativeTimeFormat('fr', { numeric: 'auto' })
@@ -99,5 +98,8 @@ export const DeadlineWidget: React.FC<DeadlineWidgetProps> = React.memo(
         </div>
       </BaseChartWidget>
     )
-  }
-)
+}
+
+DeadlineWidgetComponent.displayName = 'DeadlineWidget'
+
+export const DeadlineWidget = React.memo(DeadlineWidgetComponent)

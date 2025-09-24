@@ -22,8 +22,7 @@ interface RevenueStructureWidgetProps {
   data: RevenueStructureData
 }
 
-export const RevenueStructureWidget: React.FC<RevenueStructureWidgetProps> =
-  React.memo(({ data }) => {
+const RevenueStructureWidgetComponent: React.FC<RevenueStructureWidgetProps> = ({ data }) => {
     const { values: clientValues } = useChartData(
       data.byClient.slice(0, 5),
       (client) => client.revenue
@@ -65,7 +64,7 @@ export const RevenueStructureWidget: React.FC<RevenueStructureWidgetProps> =
       .withLegend(false)
       .withPadding(0)
       .withCurrencyFormatting()
-      .withTooltipFormatter((context: any) => {
+      .withTooltipFormatter((context: { parsed: { x: number }; label: string }) => {
         const value = context.parsed.x
         return `${context.label}: ${value.toLocaleString('fr-FR')}€`
       })
@@ -77,7 +76,7 @@ export const RevenueStructureWidget: React.FC<RevenueStructureWidgetProps> =
       .withLegend(false)
       .withPadding(0)
       .withCurrencyFormatting()
-      .withTooltipFormatter((context: any) => {
+      .withTooltipFormatter((context: { parsed: { x: number }; label: string }) => {
         const value = context.parsed.x
         return `${context.label}: ${value.toLocaleString('fr-FR')}€`
       })
@@ -97,4 +96,8 @@ export const RevenueStructureWidget: React.FC<RevenueStructureWidgetProps> =
         </div>
       </BaseChartWidget>
     )
-  })
+}
+
+RevenueStructureWidgetComponent.displayName = 'RevenueStructureWidget'
+
+export const RevenueStructureWidget = React.memo(RevenueStructureWidgetComponent)

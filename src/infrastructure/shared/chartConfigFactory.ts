@@ -52,17 +52,6 @@ export class ChartOptionsBuilder {
   }
 
   /**
-   * Set aspect ratio
-   */
-  withAspectRatio(ratio: number): this {
-    this.options = {
-      ...this.options,
-      aspectRatio: ratio,
-    }
-    return this
-  }
-
-  /**
    * Set layout padding
    */
   withPadding(
@@ -91,7 +80,7 @@ export class ChartOptionsBuilder {
         legend: {
           display,
           position,
-        } as any,
+        },
       },
     }
     return this
@@ -101,7 +90,12 @@ export class ChartOptionsBuilder {
    * Configure tooltip formatting
    */
   withTooltipFormatter(
-    formatter: ChartValueFormatter | ((context: any) => string)
+    formatter:
+      | ChartValueFormatter
+      | ((context: {
+          parsed: { x: number; y: number }
+          label: string
+        }) => string)
   ): this {
     const isHorizontalBar = this.options.indexAxis === 'y'
 
@@ -115,7 +109,10 @@ export class ChartOptionsBuilder {
             ...this.options.plugins?.tooltip?.callbacks,
             label:
               typeof formatter === 'function' && formatter.length === 1
-                ? (formatter as (context: any) => string)
+                ? (formatter as (context: {
+                    parsed: { x: number; y: number }
+                    label: string
+                  }) => string)
                 : (context) =>
                     `${context.label}: ${(formatter as ChartValueFormatter)(
                       isHorizontalBar ? context.parsed.x : context.parsed.y
@@ -214,24 +211,6 @@ export class ChartOptionsBuilder {
   }
 
   /**
-   * Set Y-axis suggested range
-   */
-  withYAxisRange(min: number, max: number): this {
-    this.options = {
-      ...this.options,
-      scales: {
-        ...this.options.scales,
-        y: {
-          ...this.options.scales?.y,
-          suggestedMin: min,
-          suggestedMax: max,
-        },
-      },
-    }
-    return this
-  }
-
-  /**
    * Set X-axis tick step size
    */
   withXAxisStepSize(size: number): this {
@@ -244,63 +223,10 @@ export class ChartOptionsBuilder {
           ticks: {
             ...this.options.scales?.x?.ticks,
             stepSize: size,
-          } as any,
+          },
         },
       },
     }
-    return this
-  }
-
-  /**
-   * Set Y-axis tick step size
-   */
-  withYAxisStepSize(size: number): this {
-    this.options = {
-      ...this.options,
-      scales: {
-        ...this.options.scales,
-        y: {
-          ...this.options.scales?.y,
-          ticks: {
-            ...this.options.scales?.y?.ticks,
-            stepSize: size,
-          } as any,
-        },
-      },
-    }
-    return this
-  }
-
-  /**
-   * Set chart height
-   */
-  withHeight(height: number): this {
-    this.options = {
-      ...this.options,
-      plugins: {
-        ...this.options.plugins,
-
-        ...({ height } as any),
-      },
-    }
-    return this
-  }
-
-  /**
-   * Apply standard formatting for plain numbers (only if not already set)
-   */
-  withPlainNumberFormatting(): this {
-    if (!this.options.plugins?.tooltip?.callbacks?.label) {
-      this.withTooltipFormatter(formatPlainNumber)
-    }
-
-    if (!this.options.scales?.x?.ticks?.callback) {
-      this.withXAxis({ formatter: formatPlainNumber })
-    }
-    if (!this.options.scales?.y?.ticks?.callback) {
-      this.withYAxis({ formatter: formatPlainNumber })
-    }
-
     return this
   }
 
@@ -385,9 +311,9 @@ export const createHorizontalBarBaseOptions = (): ExtendedChartOptions => ({
  * @param valueExtractor - Function to extract numeric value from each item
  * @param formatter - Optional formatter for values (defaults to plain number formatting)
  */
-export const useChartData = (
-  rawData: any[],
-  valueExtractor: (item: any) => number,
+export const useChartData = <T>(
+  rawData: T[],
+  valueExtractor: (item: T) => number,
   formatter: ChartValueFormatter = formatPlainNumber
 ) => {
   const values = rawData.map(valueExtractor)

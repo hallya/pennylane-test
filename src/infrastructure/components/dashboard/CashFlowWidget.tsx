@@ -25,8 +25,7 @@ interface CashFlowWidgetProps {
   data: CashFlowData
 }
 
-export const CashFlowWidget: React.FC<CashFlowWidgetProps> = React.memo(
-  ({ data }) => {
+const CashFlowWidgetComponent: React.FC<CashFlowWidgetProps> = ({ data }) => {
     const rawData = [
       { label: 'Émis', value: data.totalIssued },
       { label: 'Encours', value: data.outstandingReceivables },
@@ -58,7 +57,7 @@ export const CashFlowWidget: React.FC<CashFlowWidgetProps> = React.memo(
       .withLegend(false)
       .withPadding(0)
       .withCurrencyFormatting()
-      .withTooltipFormatter((context: any) => {
+      .withTooltipFormatter((context: { parsed: { x: number }; label: string }) => {
         const value = context.parsed.x
         return `${context.label}: ${value.toLocaleString('fr-FR')}€`
       })
@@ -81,5 +80,8 @@ export const CashFlowWidget: React.FC<CashFlowWidgetProps> = React.memo(
         <p className="mb-0 small">DSO: {data.dso.toFixed(2)} jours</p>
       </BaseChartWidget>
     )
-  }
-)
+}
+
+CashFlowWidgetComponent.displayName = 'CashFlowWidget'
+
+export const CashFlowWidget = React.memo(CashFlowWidgetComponent)

@@ -25,7 +25,7 @@ interface ClientReliabilityWidgetProps {
   data: ClientReliabilityData;
 }
 
-export const ClientReliabilityWidget: React.FC<ClientReliabilityWidgetProps> = React.memo(({ data }) => {
+const ClientReliabilityWidgetComponent: React.FC<ClientReliabilityWidgetProps> = ({ data }) => {
   const [showAll, setShowAll] = useState(false);
 
   const latePayersSorted = data.latePayers.sort((a, b) => b.lateCount - a.lateCount);
@@ -78,7 +78,7 @@ export const ClientReliabilityWidget: React.FC<ClientReliabilityWidgetProps> = R
     .withLegend(false)
     .withPadding(0)
     .withXAxisStepSize(1)
-    .withTooltipFormatter((context: any) => {
+    .withTooltipFormatter((context: { parsed: { x: number }; label: string }) => {
       const value = context.parsed.x;
       return `${context.label}: ${value} retards`;
     })
@@ -90,7 +90,7 @@ export const ClientReliabilityWidget: React.FC<ClientReliabilityWidgetProps> = R
     .withLegend(false)
     .withPadding(0)
     .withCurrencyFormatting()
-    .withTooltipFormatter((context: any) => {
+    .withTooltipFormatter((context: { parsed: { x: number }; label: string }) => {
       const value = context.parsed.x;
       return `${context.label}: ${value.toLocaleString('fr-FR')}€`;
     })
@@ -155,4 +155,8 @@ export const ClientReliabilityWidget: React.FC<ClientReliabilityWidgetProps> = R
       </div>
     </BaseChartWidget>
   );
-});
+}
+
+ClientReliabilityWidgetComponent.displayName = 'ClientReliabilityWidget'
+
+export const ClientReliabilityWidget = React.memo(ClientReliabilityWidgetComponent)

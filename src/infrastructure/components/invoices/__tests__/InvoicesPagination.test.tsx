@@ -1,59 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import InvoicesPagination from '../InvoicesPagination'
 
-vi.mock('react-bootstrap', () => ({
-  Pagination: Object.assign(
-    ({ children }: any) => <div data-testid="pagination">{children}</div>,
-    {
-      First: ({ children, disabled, onClick }: any) => (
-        <button
-          data-testid="pagination-first"
-          disabled={disabled}
-          onClick={onClick}
-        >
-          {children}
-        </button>
-      ),
-      Prev: ({ children, disabled, onClick }: any) => (
-        <button
-          data-testid="pagination-prev"
-          disabled={disabled}
-          onClick={onClick}
-        >
-          {children}
-        </button>
-      ),
-      Item: ({ children, active, onClick }: any) => (
-        <button
-          data-testid={`pagination-item-${children}`}
-          data-active={active}
-          onClick={onClick}
-        >
-          {children}
-        </button>
-      ),
-      Next: ({ children, disabled, onClick }: any) => (
-        <button
-          data-testid="pagination-next"
-          disabled={disabled}
-          onClick={onClick}
-        >
-          {children}
-        </button>
-      ),
-      Last: ({ children, disabled, onClick }: any) => (
-        <button
-          data-testid="pagination-last"
-          disabled={disabled}
-          onClick={onClick}
-        >
-          {children}
-        </button>
-      ),
-    }
-  ),
-}))
-
 describe('InvoicesPagination', () => {
   const mockOnPageChange = vi.fn()
 
@@ -70,10 +17,18 @@ describe('InvoicesPagination', () => {
       />
     )
 
-    expect(screen.queryByTestId('pagination-first')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('pagination-prev')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('pagination-next')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('pagination-last')).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'First' })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Previous' })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Next' })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Last' })
+    ).not.toBeInTheDocument()
   })
 
   it('renders nothing when totalPages is 0', () => {
@@ -85,7 +40,9 @@ describe('InvoicesPagination', () => {
       />
     )
 
-    expect(screen.queryByTestId('pagination-first')).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'First' })
+    ).not.toBeInTheDocument()
   })
 
   it('renders pagination controls when totalPages > 1', () => {
@@ -97,19 +54,19 @@ describe('InvoicesPagination', () => {
       />
     )
 
-    expect(screen.getByTestId('pagination-first')).toBeInTheDocument()
-    expect(screen.getByTestId('pagination-prev')).toBeInTheDocument()
-    expect(screen.getByTestId('pagination-next')).toBeInTheDocument()
-    expect(screen.getByTestId('pagination-last')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'First' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Previous' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Last' })).toBeInTheDocument()
 
-    expect(screen.getByTestId('pagination-item-1')).toBeInTheDocument()
-    expect(screen.getByTestId('pagination-item-2')).toBeInTheDocument()
-    expect(screen.getByTestId('pagination-item-3')).toBeInTheDocument()
-    expect(screen.getByTestId('pagination-item-4')).toBeInTheDocument()
-    expect(screen.getByTestId('pagination-item-5')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '1' })).toBeInTheDocument()
+    expect(screen.getByText('2')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '3' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '4' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '5' })).toBeInTheDocument()
   })
 
-  it('marks current page as active', () => {
+  it('sets aria-current on active page', () => {
     render(
       <InvoicesPagination
         currentPage={3}
@@ -118,13 +75,12 @@ describe('InvoicesPagination', () => {
       />
     )
 
-    expect(screen.getByTestId('pagination-item-3')).toHaveAttribute(
-      'data-active',
-      'true'
+    expect(screen.getByText('3')).toHaveAttribute(
+      'aria-current',
+      'page'
     )
-    expect(screen.getByTestId('pagination-item-1')).toHaveAttribute(
-      'data-active',
-      'false'
+    expect(screen.getByRole('button', { name: '1' })).not.toHaveAttribute(
+      'aria-current'
     )
   })
 
@@ -137,10 +93,14 @@ describe('InvoicesPagination', () => {
       />
     )
 
-    expect(screen.getByTestId('pagination-first')).toBeDisabled()
-    expect(screen.getByTestId('pagination-prev')).toBeDisabled()
-    expect(screen.getByTestId('pagination-next')).not.toBeDisabled()
-    expect(screen.getByTestId('pagination-last')).not.toBeDisabled()
+    expect(screen.queryByRole('button', { name: 'First' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Previous' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).not.toHaveAttribute(
+      'aria-disabled'
+    )
+    expect(screen.getByRole('button', { name: 'Last' })).not.toHaveAttribute(
+      'aria-disabled'
+    )
   })
 
   it('disables next and last buttons on last page', () => {
@@ -152,10 +112,14 @@ describe('InvoicesPagination', () => {
       />
     )
 
-    expect(screen.getByTestId('pagination-first')).not.toBeDisabled()
-    expect(screen.getByTestId('pagination-prev')).not.toBeDisabled()
-    expect(screen.getByTestId('pagination-next')).toBeDisabled()
-    expect(screen.getByTestId('pagination-last')).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'First' })).not.toHaveAttribute(
+      'aria-disabled'
+    )
+    expect(
+      screen.getByRole('button', { name: 'Previous' })
+    ).not.toHaveAttribute('aria-disabled')
+    expect(screen.queryByRole('button', { name: 'Next' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Last' })).not.toBeInTheDocument()
   })
 
   it('calls onPageChange with correct page when clicking first', () => {
@@ -167,7 +131,7 @@ describe('InvoicesPagination', () => {
       />
     )
 
-    fireEvent.click(screen.getByTestId('pagination-first'))
+    fireEvent.click(screen.getByRole('button', { name: 'First' }))
     expect(mockOnPageChange).toHaveBeenCalledWith(1)
   })
 
@@ -180,7 +144,7 @@ describe('InvoicesPagination', () => {
       />
     )
 
-    fireEvent.click(screen.getByTestId('pagination-prev'))
+    fireEvent.click(screen.getByRole('button', { name: 'Previous' }))
     expect(mockOnPageChange).toHaveBeenCalledWith(2)
   })
 
@@ -193,7 +157,7 @@ describe('InvoicesPagination', () => {
       />
     )
 
-    fireEvent.click(screen.getByTestId('pagination-next'))
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }))
     expect(mockOnPageChange).toHaveBeenCalledWith(4)
   })
 
@@ -206,7 +170,7 @@ describe('InvoicesPagination', () => {
       />
     )
 
-    fireEvent.click(screen.getByTestId('pagination-last'))
+    fireEvent.click(screen.getByRole('button', { name: 'Last' }))
     expect(mockOnPageChange).toHaveBeenCalledWith(5)
   })
 
@@ -219,7 +183,7 @@ describe('InvoicesPagination', () => {
       />
     )
 
-    fireEvent.click(screen.getByTestId('pagination-item-4'))
+    fireEvent.click(screen.getByRole('button', { name: '4' }))
     expect(mockOnPageChange).toHaveBeenCalledWith(4)
   })
 
@@ -232,9 +196,9 @@ describe('InvoicesPagination', () => {
       />
     )
 
-    expect(screen.getByTestId('pagination-item-1')).toBeInTheDocument()
-    expect(screen.getByTestId('pagination-item-2')).toBeInTheDocument()
-    expect(screen.getByTestId('pagination-item-3')).toBeInTheDocument()
-    expect(screen.queryByTestId('pagination-item-4')).not.toBeInTheDocument()
+    expect(screen.getByText('1')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '2' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '3' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '4' })).not.toBeInTheDocument()
   })
 })

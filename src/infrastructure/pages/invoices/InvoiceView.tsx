@@ -83,7 +83,7 @@ const InvoiceView: React.FC = () => {
                   >
                     Retour aux factures
                   </Button>
-                  {!invoice.paid && (
+                  {!invoice.finalized && (
                     <Button
                       variant="primary"
                       onClick={() => navigate(`/invoices/edit/${invoice.id}`)}

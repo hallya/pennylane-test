@@ -327,11 +327,11 @@ describe('InvoicesTable', () => {
   })
 
   describe('Edit Button Display', () => {
-    it('renders edit button only for unpaid invoices', () => {
+    it('renders edit button only for draft invoices', () => {
       render(<InvoicesTable {...defaultProps} />)
 
       const editButtons = screen.getAllByTitle('Modifier la facture')
-      expect(editButtons.length).toBe(4)
+      expect(editButtons.length).toBe(1)
 
       expect(editButtons[0]).toHaveClass(
         'btn',
@@ -342,7 +342,7 @@ describe('InvoicesTable', () => {
       expect(editButtons[0]).toHaveAttribute('title', 'Modifier la facture')
     })
 
-    it('does not render edit button for paid invoices', () => {
+    it('does not render edit button for finalized invoices', () => {
       render(
         <InvoicesTable
           {...defaultProps}
@@ -374,16 +374,16 @@ describe('InvoicesTable', () => {
       const editButtons = screen.getAllByTitle('Modifier la facture')
       fireEvent.click(editButtons[0])
 
-      expect(mockOnEdit).toHaveBeenCalledWith(2)
+      expect(mockOnEdit).toHaveBeenCalledWith(4)
     })
   })
 
   describe('Delete Button Display', () => {
-    it('renders delete button only for unpaid invoices', () => {
+    it('renders delete button only for draft invoices', () => {
       render(<InvoicesTable {...defaultProps} />)
 
       const deleteButtons = screen.getAllByTitle('Supprimer la facture')
-      expect(deleteButtons.length).toBe(4)
+      expect(deleteButtons.length).toBe(1)
 
       expect(deleteButtons[0]).toHaveClass(
         'btn',
@@ -394,7 +394,7 @@ describe('InvoicesTable', () => {
       expect(deleteButtons[0]).toHaveAttribute('title', 'Supprimer la facture')
     })
 
-    it('does not render delete button for paid invoices', () => {
+    it('does not render delete button for finalized invoices', () => {
       render(<InvoicesTable {...defaultProps} />)
 
       const firstRow = screen.getByText('#1').closest('tr')
@@ -434,7 +434,7 @@ describe('InvoicesTable', () => {
       fireEvent.click(deleteButtons[0])
 
       await waitFor(() => {
-        expect(mockOnDelete).toHaveBeenCalledWith(2)
+        expect(mockOnDelete).toHaveBeenCalledWith(4)
       })
     })
 

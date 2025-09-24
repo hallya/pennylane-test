@@ -208,7 +208,7 @@ describe('InvoiceView', () => {
       expect(paidAmountElements).toHaveLength(3)
     })
 
-    it('does not render edit button for paid invoices', () => {
+    it('does not render edit button for finalized invoices', () => {
       renderInvoiceView(createMockHookResponse(createPaidInvoiceWithCustomer()))
 
       expect(screen.queryByText('Modifier')).not.toBeInTheDocument()
@@ -234,7 +234,7 @@ describe('InvoiceView', () => {
       expect(screen.getByText('Non payée')).toBeInTheDocument()
     })
 
-    it('renders edit button for unpaid invoices', () => {
+    it('renders edit button for draft invoices', () => {
       renderInvoiceView(createMockHookResponse(createDraftInvoice()))
 
       expect(screen.getByRole('button', { name: /modifier/i })).toBeInTheDocument()

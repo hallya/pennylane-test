@@ -126,7 +126,7 @@ const InvoicesTableComponent: React.FC<InvoicesTableProps> = ({ data, onDelete, 
                       >
                         <i className="bi bi-eye"></i>
                       </button>
-                      {!invoice.paid && (
+                      {!invoice.finalized && (
                         <button
                           className="btn btn-sm btn-outline-primary ms-2"
                           onClick={() => onEdit(invoice.id)}
@@ -135,7 +135,7 @@ const InvoicesTableComponent: React.FC<InvoicesTableProps> = ({ data, onDelete, 
                           <i className="bi bi-pencil"></i>
                         </button>
                       )}
-                      {!invoice.paid && (
+                      {!invoice.finalized && (
                         <button
                           className="btn btn-sm btn-outline-danger ms-2"
                           onClick={() => handleDelete(invoice.id)}

@@ -11,29 +11,39 @@ export function useDebouncedSearch(
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const lastSearchQueryRef = useRef<string>('')
 
+  const handleComplete = () => setIsSearching(false)
+
   useEffect(() => {
     if (debounceTimeoutRef.current) {
       clearTimeout(debounceTimeoutRef.current)
     }
 
-    if (query && query.length >= minLength && query !== lastSearchQueryRef.current) {
-      debounceTimeoutRef.current = setTimeout(() => {
-        lastSearchQueryRef.current = query
-        setIsSearching(true)
-        Promise.resolve(searchFunction(query)).finally(() => {
-          setIsSearching(false)
-        })
-      }, debounceMs)
-    } else if (query.length < minLength) {
+    if (query.length < minLength) {
       setIsSearching(false)
       lastSearchQueryRef.current = ''
+      return
     }
 
-    return () => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current)
-      }
+    if (query === lastSearchQueryRef.current) {
+      return
     }
+
+    debounceTimeoutRef.current = setTimeout(() => {
+      lastSearchQueryRef.current = query
+      setIsSearching(true)
+
+      try {
+        const result = searchFunction(query)
+
+        if (result instanceof Promise) {
+          result.then(handleComplete, handleComplete)
+        } else {
+          handleComplete()
+        }
+      } catch (error) {
+        handleComplete()
+      }
+    }, debounceMs)
   }, [query, searchFunction, minLength, debounceMs])
 
   const updateQuery = (newQuery: string) => {

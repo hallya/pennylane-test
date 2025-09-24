@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom'
 
 const Navigation: React.FC = () => {
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar bg="light" expand="lg" className="position-sticky top-0 z-1">
       <Container>
         <Navbar.Brand as={Link} to="/">
           Invoce

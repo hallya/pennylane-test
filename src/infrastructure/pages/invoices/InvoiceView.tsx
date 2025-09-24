@@ -157,7 +157,7 @@ const InvoiceView: React.FC = () => {
                       <Card.Header>
                         <h2 className="mb-0">Lignes de Facture</h2>
                       </Card.Header>
-                      <Card.Body className="p-0">
+                      <Card.Body className="p-0 overflow-auto">
                         <Table striped bordered hover>
                           <thead>
                             <tr>

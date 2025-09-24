@@ -18,14 +18,12 @@ export const useGetInvoice = (id: number | null): UseGetInvoiceReturn => {
   const [data, setData] = useState<InvoiceEntity | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const hasFetched = useRef(false);
+  const hasFetched = useRef(false)
 
   const fetchInvoice = useCallback(async () => {
     if (!id) return
 
     try {
-      if (hasFetched.current) return;
-      hasFetched.current = true;
       setLoading(true)
       setError(null)
       const gateway = new InvoiceGatewayImpl(api)
@@ -45,8 +43,15 @@ export const useGetInvoice = (id: number | null): UseGetInvoiceReturn => {
   }, [api, id, showToast])
 
   useEffect(() => {
+    if (hasFetched.current) return
+    hasFetched.current = true
     fetchInvoice()
   }, [fetchInvoice])
 
-  return { data, loading, error, refetch: fetchInvoice }
+  return {
+    data,
+    loading,
+    error,
+    refetch: fetchInvoice,
+  }
 }

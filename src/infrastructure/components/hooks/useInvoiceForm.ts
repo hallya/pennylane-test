@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useCreateInvoice } from '../../../adapters/controllers'
-import { useUpdateInvoice } from '../../../adapters/controllers/invoices/useUpdateInvoice'
-import { useGetInvoice } from '../../../adapters/controllers/invoices/useGetInvoice'
-import { useSearchCustomers } from '../../../adapters/controllers/customers'
-import { useSearchProducts } from '../../../adapters/controllers/products/useProducts'
+import {
+  useCreateInvoice,
+  useUpdateInvoice,
+  useGetInvoice,
+  useSearchCustomers,
+  useSearchProducts,
+} from '../../../adapters/controllers'
 import { useDebouncedSearch, useFormManager } from './index'
 import { Components } from '../../../api/gen/client'
 import { ValidationMode, InvoiceFormData } from '../../pages/invoices/types'
@@ -12,7 +14,10 @@ import { INVOICE_FORM_CONSTANTS } from '../../../domain/constants'
 
 type InvoiceFormMode = 'create' | 'edit'
 
-export function useInvoiceForm(mode: InvoiceFormMode, invoiceId: number | null = null) {
+export function useInvoiceForm(
+  mode: InvoiceFormMode,
+  invoiceId: number | null = null
+) {
   const navigate = useNavigate()
   const { createInvoice } = useCreateInvoice()
   const { updateInvoice } = useUpdateInvoice()
@@ -28,7 +33,7 @@ export function useInvoiceForm(mode: InvoiceFormMode, invoiceId: number | null =
   const [showProducts, setShowProducts] = useState(false)
 
   const { form } = useFormManager<InvoiceFormData>({
-    onSubmit: () => {}, // Not used, we handle submission manually
+    onSubmit: () => {},
     initialValues: {
       customerName: '',
       date: '',
@@ -58,23 +63,22 @@ export function useInvoiceForm(mode: InvoiceFormMode, invoiceId: number | null =
       form.setValue('deadline', invoiceData.deadline || '')
       form.setValue('paid', invoiceData.paid)
 
-      const linesMap = new Map<
-        number,
-        Components.Schemas.InvoiceLineCreatePayload & { id?: number }
-      >()
-      invoiceData.invoice_lines.forEach((line) => {
-        linesMap.set(line.product_id, {
-          ...line,
-          id: line.id,
-          product_id: line.product_id,
-          quantity: line.quantity,
-          label: line.label,
-          unit: line.unit,
-          vat_rate: line.vat_rate,
-          price: line.price,
-          tax: line.tax,
-        })
-      })
+      const linesMap = new Map(
+        invoiceData.invoice_lines.map((line) => [
+          line.product_id,
+          {
+            ...line,
+            id: line.id,
+            product_id: line.product_id,
+            quantity: line.quantity,
+            label: line.label,
+            unit: line.unit,
+            vat_rate: line.vat_rate,
+            price: line.price,
+            tax: line.tax,
+          },
+        ])
+      )
       form.setValue('invoiceLines', linesMap)
     }
   }, [mode, invoiceData, invoiceLoading, form])
@@ -165,33 +169,28 @@ export function useInvoiceForm(mode: InvoiceFormMode, invoiceId: number | null =
   const submitInvoice = async (data: InvoiceFormData, finalized: boolean) => {
     if (!selectedCustomer) return
 
-    if (mode === 'create') {
-      const payload = {
-        customer_id: selectedCustomer.id,
-        finalized,
-        ...(data.paid !== undefined && { paid: data.paid }),
-        ...(data.date && { date: data.date }),
-        ...(data.deadline && { deadline: data.deadline }),
-        invoice_lines_attributes: Array.from(data.invoiceLines.values()),
-      }
+    const basePayload = {
+      customer_id: selectedCustomer.id,
+      finalized,
+      ...(data.paid !== undefined && { paid: data.paid }),
+      ...(data.date && { date: data.date }),
+      ...(data.deadline && { deadline: data.deadline }),
+      invoice_lines_attributes: Array.from(data.invoiceLines.values()),
+    }
 
-      await createInvoice(payload)
+    if (mode === 'create') {
+      await createInvoice(basePayload)
     } else if (mode === 'edit' && invoiceId) {
       const payload: Components.Schemas.InvoiceUpdatePayload = {
         id: invoiceId,
-        customer_id: selectedCustomer.id,
-        finalized,
-        ...(data.paid !== undefined && { paid: data.paid }),
-        ...(data.date && { date: data.date }),
-        ...(data.deadline && { deadline: data.deadline }),
-        invoice_lines_attributes: Array.from(data.invoiceLines.values()).map(
+        ...basePayload,
+        invoice_lines_attributes: basePayload.invoice_lines_attributes.map(
           (line) => ({
             ...line,
             id: line.id,
           })
         ),
       }
-
       await updateInvoice(invoiceId, payload)
     }
     navigate('/invoices')

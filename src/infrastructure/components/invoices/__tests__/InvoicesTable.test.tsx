@@ -128,7 +128,7 @@ describe('InvoicesTable', () => {
         screen.getByRole('columnheader', { name: /statut/i })
       ).toBeInTheDocument()
       expect(
-        screen.getByRole('columnheader', { name: /prénom et nom du customer/i })
+        screen.getByRole('columnheader', { name: /prénom et nom du client/i })
       ).toBeInTheDocument()
       expect(
         screen.getByRole('columnheader', { name: /date d'émission/i })

@@ -48,6 +48,7 @@ export function CustomerSelector({
               <div className="position-relative">
                 <Form.Control
                   {...field}
+                  value={field.value ?? ''}
                   id="customerName"
                   type="text"
                   placeholder="Tapez le nom du client..."

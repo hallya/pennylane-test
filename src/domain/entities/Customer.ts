@@ -1,6 +1,6 @@
-import { Customer } from '../../types';
+import { DomainCustomer } from '../types';
 
-export class CustomerEntity implements Customer {
+export class CustomerEntity implements DomainCustomer {
   id: number;
   first_name: string;
   last_name: string;
@@ -10,7 +10,7 @@ export class CustomerEntity implements Customer {
   country: string;
   country_code: string;
 
-  constructor(data: Customer) {
+  constructor(data: DomainCustomer) {
     this.id = data.id;
     this.first_name = data.first_name;
     this.last_name = data.last_name;

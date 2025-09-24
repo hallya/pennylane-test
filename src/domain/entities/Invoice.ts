@@ -1,10 +1,10 @@
-import { Invoice, InvoiceLine, Customer } from '../../types'
+import { DomainInvoice, DomainInvoiceLine, DomainCustomer } from '../types'
 import {
   AT_RISK_DSO_MILLISECONDS_THRESHOLD,
   INVOICE_STATUS,
 } from '../constants'
 
-export class InvoiceEntity implements Invoice {
+export class InvoiceEntity implements DomainInvoice {
   id: number
   customer_id: number | null
   finalized: boolean
@@ -13,10 +13,10 @@ export class InvoiceEntity implements Invoice {
   deadline: string | null
   total: string | null
   tax: string | null
-  invoice_lines: InvoiceLine[]
-  customer?: Customer
+  invoice_lines: DomainInvoiceLine[]
+  customer?: DomainCustomer
 
-  constructor(data: Invoice) {
+  constructor(data: DomainInvoice) {
     this.id = data.id
     this.customer_id = data.customer_id
     this.finalized = data.finalized

@@ -1,4 +1,4 @@
-import { Invoice } from '../../types';
+import { DomainInvoice } from '../types';
 import { InvoiceEntity } from '../entities';
 import { LARGE_OUTSTANDING_EUROS_THRESHOLD } from '../constants';
 
@@ -8,7 +8,7 @@ export interface ClientReliabilityData {
 }
 
 export class CalculateClientReliability {
-  execute(invoices: Invoice[]): ClientReliabilityData {
+  execute(invoices: DomainInvoice[]): ClientReliabilityData {
     const customerStats: { [key: number]: { name: string; late: number; outstanding: number } } = {};
 
     const invoiceEntities = invoices.map(inv => new InvoiceEntity(inv));

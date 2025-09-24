@@ -1,7 +1,7 @@
 import { ReactNode, createContext, useContext, useRef } from 'react'
 import OpenAPIClientAxios from 'openapi-client-axios'
-import { Client } from './gen/client'
-import definition from './gen/schema.json'
+import { Client } from '../../domain/types/api'
+import definition from '../../domain/types/schema.json'
 
 interface ApiContextState {
   client: Client | undefined

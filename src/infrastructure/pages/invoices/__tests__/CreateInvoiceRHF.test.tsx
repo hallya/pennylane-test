@@ -35,7 +35,7 @@ vi.mock('../../../components/hooks', () => ({
   })),
 }))
 
-vi.mock('../../../../api', () => ({
+vi.mock('../../../api', () => ({
   useApi: vi.fn(() => ({})),
 }))
 
@@ -105,6 +105,7 @@ vi.mock('react-router-dom', async () => {
     useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()]),
   }
 })
+
 
 describe('CreateInvoiceRHF', () => {
   const mockForm = {

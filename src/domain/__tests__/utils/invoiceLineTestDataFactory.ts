@@ -1,11 +1,11 @@
 import { faker } from '@faker-js/faker';
-import { InvoiceLine, Product } from '../../../types';
+import { DomainInvoiceLine, DomainProduct } from '../../types';
 
 faker.seed(123);
 
 export class InvoiceLineTestDataFactory {
-  static create(overrides: Partial<InvoiceLine> = {}): InvoiceLine {
-    const product: Product = {
+  static create(overrides: Partial<DomainInvoiceLine> = {}): DomainInvoiceLine {
+    const product: DomainProduct = {
       id: faker.number.int({ min: 1, max: 1000 }),
       label: faker.commerce.productName(),
       vat_rate: faker.helpers.arrayElement(['0', '5.5', '10', '20']),

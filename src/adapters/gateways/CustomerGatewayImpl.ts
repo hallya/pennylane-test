@@ -1,10 +1,11 @@
 import { CustomerGateway } from '../../domain/useCases';
-import { Client, Components } from '../../api/gen/client';
+import { DomainCustomer } from '../../domain/types';
+import { Client } from '../../domain/types/api';
 
 export class CustomerGatewayImpl implements CustomerGateway {
   constructor(private api: Client) {}
 
-  async searchCustomers(query: string): Promise<Components.Schemas.Customer[]> {
+  async searchCustomers(query: string): Promise<DomainCustomer[]> {
     const { data } = await this.api.getSearchCustomers({
       query,
       page: 1,

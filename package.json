@@ -11,8 +11,8 @@
     "type-check": "tsc --noEmit",
     "eject": "react-scripts eject",
     "eject_ts": "./bin/eject_ts",
-    "openapi:gen": "pnpm -s typegen src/api/schema.yml > src/api/gen/client.d.ts && pnpm openapi:convert",
-    "openapi:convert": "npx @redocly/openapi-cli bundle ./src/api/schema.yml -o ./src/api/gen/schema.json --format json",
+    "openapi:gen": "pnpm -s typegen src/domain/schema.yml > src/domain/types/api.d.ts && pnpm openapi:convert",
+    "openapi:convert": "npx @redocly/openapi-cli bundle ./src/domain/schema.yml -o ./src/domain/types/schema.json --format json",
     "prepare": "husky"
   },
   "dependencies": {

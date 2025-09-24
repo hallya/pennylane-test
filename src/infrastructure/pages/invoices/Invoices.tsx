@@ -44,7 +44,7 @@ const Invoices: React.FC = () => {
 
   const { data, loading, error, pagination, refetch } = useInvoices({
     page: currentPage,
-    perPage: 50,
+    perPage: 20,
     customerId,
   })
   const { deleteInvoice } = useDeleteInvoice()

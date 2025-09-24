@@ -1,15 +1,15 @@
 import { Form, Col, Row, Dropdown } from 'react-bootstrap'
 import { Controller, UseFormReturn } from 'react-hook-form'
-import { Components } from '../../../api/gen/client'
 import { InvoiceFormData, ValidationMode } from '../../pages/invoices/types'
+import { DomainCustomer } from '../../../domain/types'
 
 interface CustomerSelectorProps {
   form: UseFormReturn<InvoiceFormData>
-  customers: Components.Schemas.Customer[]
-  selectedCustomer: Components.Schemas.Customer | null
+  customers: DomainCustomer[]
+  selectedCustomer: DomainCustomer | null
   showSuggestions: boolean
   handleCustomerSearchChange: (value: string) => void
-  handleCustomerSelect: (customer: Components.Schemas.Customer) => void
+  handleCustomerSelect: (customer: DomainCustomer) => void
   validationMode: ValidationMode | null
 }
 

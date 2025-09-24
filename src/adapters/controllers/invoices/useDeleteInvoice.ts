@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useApi } from '../../../api'
+import { useApi } from '../../../infrastructure/api'
 import { InvoiceGatewayImpl } from '../../gateways'
 import { useToast } from '../../../infrastructure/components/hooks/useToast'
 import { AxiosError } from 'openapi-client-axios'

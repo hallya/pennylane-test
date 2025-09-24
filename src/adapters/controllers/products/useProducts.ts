@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useApi } from '../../../api'
-import { Components } from '../../../api/gen/client'
+import { useApi } from '../../../infrastructure/api'
+import { Components } from '../../../domain/types/api'
 import { useToast } from '../../../infrastructure/components/hooks/useToast'
 import { AxiosError } from 'openapi-client-axios'
 

@@ -1,10 +1,10 @@
 import { faker } from '@faker-js/faker';
-import { Product } from '../../../types';
+import { DomainProduct } from '../../types';
 
 faker.seed(123);
 
 export class ProductTestDataFactory {
-  static create(overrides: Partial<Product> = {}): Product {
+  static create(overrides: Partial<DomainProduct> = {}): DomainProduct {
     return {
       id: faker.number.int({ min: 1, max: 1000 }),
       label: faker.commerce.productName(),

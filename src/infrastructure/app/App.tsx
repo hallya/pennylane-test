@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 
-import { Dashboard, Invoices, CreateInvoiceRHF, EditInvoiceRHF, InvoiceView } from '../infrastructure/pages'
-import Navigation from '../infrastructure/components/Navigation'
-import { ToastProvider } from '../infrastructure/components/ToastProvider'
+import { Dashboard, Invoices, CreateInvoiceRHF, EditInvoiceRHF, InvoiceView } from '../pages'
+import Navigation from '../components/Navigation'
+import { ToastProvider } from '../components/ToastProvider'
 
 function App() {
   return (

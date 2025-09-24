@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { useApi } from '../../../api'
 import { InvoiceGatewayImpl } from '../../gateways'
 import { InvoiceEntity } from '../../../domain/entities'
-import { Components } from '../../../api/gen/client'
+import { DomainInvoiceCreatePayload } from '../../../domain/types'
 import { useToast } from '../../../infrastructure/components/hooks/useToast'
 import { AxiosError } from 'openapi-client-axios'
+import { useApi } from '../../../infrastructure/api'
 
 export const useCreateInvoice = () => {
   const api = useApi()
@@ -12,7 +12,7 @@ export const useCreateInvoice = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const createInvoice = async (payload: Components.Schemas.InvoiceCreatePayload) => {
+  const createInvoice = async (payload: DomainInvoiceCreatePayload) => {
     try {
       setLoading(true)
       setError(null)

@@ -1,15 +1,23 @@
-import { InvoiceGateway } from '../../domain/useCases';
-import { Invoice, PaginatedInvoices } from '../../types';
-import { Client, Components } from '../../api/gen/client';
+import { InvoiceGateway } from '../../domain/useCases'
+import {
+  DomainInvoice,
+  DomainPaginatedInvoices,
+  DomainInvoiceCreatePayload,
+  DomainInvoiceUpdatePayload,
+} from '../../domain/types'
 
-import { FilterItem, InvoiceFilters } from '../../domain/useCases/InvoiceGateway';
+import {
+  FilterItem,
+  InvoiceFilters,
+} from '../../domain/useCases/InvoiceGateway'
+import { Client } from '../../domain/types/api'
 
 type FilterMapping = {
-  key: keyof InvoiceFilters;
-  field: string;
-  operator: string;
-  customHandler?: (value: unknown) => FilterItem[];
-};
+  key: keyof InvoiceFilters
+  field: string
+  operator: string
+  customHandler?: (value: unknown) => FilterItem[]
+}
 
 export class InvoiceGatewayImpl implements InvoiceGateway {
   constructor(private api: Client) {}
@@ -34,58 +42,70 @@ export class InvoiceGatewayImpl implements InvoiceGateway {
         { field: 'date', operator: 'lteq', value: `${year as number}-12-31` },
       ],
     },
-  ];
+  ]
 
   private convertFiltersToFilterItems(filters: InvoiceFilters): FilterItem[] {
-    const items: FilterItem[] = [];
+    const items: FilterItem[] = []
 
     for (const mapping of this.filterMappings) {
-      const value = filters[mapping.key];
+      const value = filters[mapping.key]
       if (value !== undefined) {
         if (mapping.customHandler) {
-          items.push(...mapping.customHandler(value));
+          items.push(...mapping.customHandler(value))
         } else {
-          items.push({ field: mapping.field, operator: mapping.operator, value });
+          items.push({
+            field: mapping.field,
+            operator: mapping.operator,
+            value,
+          })
         }
       }
     }
 
-    return items;
+    return items
   }
 
-  async getAllInvoices(page?: number, perPage?: number, filters?: InvoiceFilters): Promise<PaginatedInvoices> {
-    const params: Record<string, unknown> = {};
-    if (page !== undefined) params.page = page;
-    if (perPage !== undefined) params.per_page = perPage;
+  async getAllInvoices(
+    page?: number,
+    perPage?: number,
+    filters?: InvoiceFilters
+  ): Promise<DomainPaginatedInvoices> {
+    const params: Record<string, unknown> = {}
+    if (page !== undefined) params.page = page
+    if (perPage !== undefined) params.per_page = perPage
 
     if (filters) {
-      const filterItems = this.convertFiltersToFilterItems(filters);
+      const filterItems = this.convertFiltersToFilterItems(filters)
       if (filterItems.length > 0) {
-        params.filter = JSON.stringify(filterItems);
+        params.filter = JSON.stringify(filterItems)
       }
     }
 
-    const { data } = await this.api.getInvoices(params);
-    return data;
+    const { data } = await this.api.getInvoices(params)
+    return data
   }
 
-
-  async getInvoice(id: number): Promise<Invoice> {
-    const { data } = await this.api.getInvoice(id);
-    return data;
+  async getInvoice(id: number): Promise<DomainInvoice> {
+    const { data } = await this.api.getInvoice(id)
+    return data
   }
 
-  async createInvoice(payload: Components.Schemas.InvoiceCreatePayload): Promise<Invoice> {
-    const { data } = await this.api.postInvoices(null, { invoice: payload });
-    return data;
+  async createInvoice(
+    payload: DomainInvoiceCreatePayload
+  ): Promise<DomainInvoice> {
+    const { data } = await this.api.postInvoices(null, { invoice: payload })
+    return data
   }
 
-  async updateInvoice(id: number, payload: Components.Schemas.InvoiceUpdatePayload): Promise<Invoice> {
-    const { data } = await this.api.putInvoice(id, { invoice: payload });
-    return data;
+  async updateInvoice(
+    id: number,
+    payload: DomainInvoiceUpdatePayload
+  ): Promise<DomainInvoice> {
+    const { data } = await this.api.putInvoice(id, { invoice: payload })
+    return data
   }
 
   async deleteInvoice(id: number): Promise<void> {
-    await this.api.deleteInvoice(id);
+    await this.api.deleteInvoice(id)
   }
 }

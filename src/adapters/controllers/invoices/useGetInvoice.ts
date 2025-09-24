@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { useApi } from '../../../api'
+import { useApi } from '../../../infrastructure/api'
 import { InvoiceGatewayImpl } from '../../gateways'
 import { InvoiceEntity } from '../../../domain/entities'
 import { useToast } from '../../../infrastructure/components/hooks/useToast'

@@ -1,10 +1,10 @@
 import { faker } from '@faker-js/faker'
-import { Invoice } from '../../../types'
+import { DomainInvoice } from '../../types'
 
 faker.seed(123)
 
 export class InvoiceTestDataFactory {
-  static create(overrides: Partial<Invoice> = {}): Invoice {
+  static create(overrides: Partial<DomainInvoice> = {}): DomainInvoice {
     const id = overrides.id || faker.number.int({ min: 1, max: 1000 })
     const total = overrides.total || faker.finance.amount()
     const tax = overrides.tax || faker.finance.amount()
@@ -18,6 +18,7 @@ export class InvoiceTestDataFactory {
       deadline: faker.date.future().toISOString().split('T')[0],
       total,
       tax,
+      customer: undefined,
       invoice_lines: overrides.invoice_lines || [
         {
           id: faker.number.int({ min: 1, max: 1000 }),
@@ -44,25 +45,25 @@ export class InvoiceTestDataFactory {
     }
   }
 
-  static paid(overrides: Partial<Invoice> = {}): Invoice {
+  static paid(overrides: Partial<DomainInvoice> = {}): DomainInvoice {
     return this.create({ paid: true, ...overrides })
   }
 
-  static unpaid(overrides: Partial<Invoice> = {}): Invoice {
+  static unpaid(overrides: Partial<DomainInvoice> = {}): DomainInvoice {
     return this.create({ paid: false, ...overrides })
   }
 
-  static overdue(overrides: Partial<Invoice> = {}): Invoice {
+  static overdue(overrides: Partial<DomainInvoice> = {}): DomainInvoice {
     const pastDate = faker.date.past({ years: 1 }).toISOString().split('T')[0]
     return this.create({ deadline: pastDate, ...overrides })
   }
 
-  static dueSoon(overrides: Partial<Invoice> = {}): Invoice {
+  static dueSoon(overrides: Partial<DomainInvoice> = {}): DomainInvoice {
     const futureDate = faker.date.soon({ days: 15 }).toISOString().split('T')[0]
     return this.create({ deadline: futureDate, ...overrides })
   }
 
-  static future(overrides: Partial<Invoice> = {}): Invoice {
+  static future(overrides: Partial<DomainInvoice> = {}): DomainInvoice {
     const futureDate = faker.date
       .future({ years: 1 })
       .toISOString()
@@ -70,7 +71,7 @@ export class InvoiceTestDataFactory {
     return this.create({ deadline: futureDate, ...overrides })
   }
 
-  static withoutDeadline(overrides: Partial<Invoice> = {}): Invoice {
+  static withoutDeadline(overrides: Partial<DomainInvoice> = {}): DomainInvoice {
     return this.create({ deadline: null, ...overrides })
   }
 }

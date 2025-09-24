@@ -1,4 +1,4 @@
-import { Invoice } from '../../types';
+import { DomainInvoice } from '../types';
 import { InvoiceEntity } from '../entities';
 import { DSO_DAYS_PERIOD, AT_RISK_DSO_DAYS_THRESHOLD, AT_RISK_OUTSTANDING_EUROS_THRESHOLD } from '../constants';
 
@@ -11,7 +11,7 @@ export interface CashFlowData {
 }
 
 export class CalculateCashFlow {
-  execute(invoices: Invoice[]): CashFlowData {
+  execute(invoices: DomainInvoice[]): CashFlowData {
     const invoiceEntities = invoices.map(inv => new InvoiceEntity(inv));
 
     const totalIssued = invoiceEntities.reduce((sum, inv) => sum + inv.getTotalAmount(), 0);

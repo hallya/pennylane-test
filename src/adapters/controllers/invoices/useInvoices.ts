@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { useApi } from '../../../api'
+import { useApi } from '../../../infrastructure/api'
 import { InvoiceGatewayImpl } from '../../gateways'
 import { InvoiceEntity } from '../../../domain/entities'
-import { Pagination } from '../../../infrastructure/api/types'
+import { Components } from '../../../domain/types/api'
 import { useToast } from '../../../infrastructure/components/hooks/useToast'
 import { AxiosError } from 'openapi-client-axios'
 import { InvoiceFilters } from '../../../domain/useCases/InvoiceGateway'
@@ -17,7 +17,7 @@ interface UseInvoicesReturn {
   data: InvoiceEntity[] | null
   loading: boolean
   error: string | null
-  pagination: Pagination | null
+  pagination: Components.Schemas.Pagination | null
   refetch: () => void
 }
 
@@ -31,7 +31,7 @@ export const useInvoices = ({
   const [data, setData] = useState<InvoiceEntity[] | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [pagination, setPagination] = useState<Pagination | null>(null)
+  const [pagination, setPagination] = useState<Components.Schemas.Pagination | null>(null)
   const hasFetched = useRef(false)
 
   const fetchInvoices = useCallback(async () => {

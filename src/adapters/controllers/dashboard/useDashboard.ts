@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useApi } from '../../../api'
+import { useApi } from '../../../infrastructure/api'
 import { InvoiceGatewayImpl } from '../../gateways'
 import {
   GetDashboardData,

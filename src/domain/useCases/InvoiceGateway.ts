@@ -1,5 +1,4 @@
-import { Invoice, PaginatedInvoices } from '../../types';
-import { Components } from '../../api/gen/client';
+import { DomainInvoice, DomainPaginatedInvoices, DomainInvoiceCreatePayload, DomainInvoiceUpdatePayload } from '../types';
 
 export type FilterItem = {
   field: string;
@@ -22,9 +21,9 @@ export interface InvoiceFilters {
 }
 
 export interface InvoiceGateway {
-  getAllInvoices(page?: number, perPage?: number, filters?: InvoiceFilters): Promise<PaginatedInvoices>;
-  getInvoice(id: number): Promise<Invoice>;
-  createInvoice(payload: Components.Schemas.InvoiceCreatePayload): Promise<Invoice>;
-  updateInvoice(id: number, payload: Components.Schemas.InvoiceUpdatePayload): Promise<Invoice>;
+  getAllInvoices(page?: number, perPage?: number, filters?: InvoiceFilters): Promise<DomainPaginatedInvoices>;
+  getInvoice(id: number): Promise<DomainInvoice>;
+  createInvoice(payload: DomainInvoiceCreatePayload): Promise<DomainInvoice>;
+  updateInvoice(id: number, payload: DomainInvoiceUpdatePayload): Promise<DomainInvoice>;
   deleteInvoice(id: number): Promise<void>;
 }

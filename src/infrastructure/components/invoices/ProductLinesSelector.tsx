@@ -1,23 +1,23 @@
 import { useState } from 'react'
 import { Form, Row, Col, Card, Dropdown, Button } from 'react-bootstrap'
 import { Controller, UseFormReturn } from 'react-hook-form'
-import { Components } from '../../../api/gen/client'
 import { InvoiceFormData, ValidationMode } from '../../pages/invoices/types'
 import { formatCurrency } from '../../shared/chartUtils'
+import { DomainProduct } from '../../../domain/types'
 
 interface ProductLinesSelectorProps {
   form: UseFormReturn<InvoiceFormData>
-  products: Components.Schemas.Product[]
+  products: DomainProduct[]
   productSearchQuery: string
   updateProductQuery: (query: string) => void
   searchProducts: (query: string) => void
-  selectedProduct: Components.Schemas.Product | null
-  setSelectedProduct: (product: Components.Schemas.Product | null) => void
+  selectedProduct: DomainProduct | null
+  setSelectedProduct: (product: DomainProduct | null) => void
   showProducts: boolean
   setShowProducts: (show: boolean) => void
-  invoiceLines: Map<number, Components.Schemas.InvoiceLineCreatePayload>
+  invoiceLines: InvoiceFormData['invoiceLines']
   handleAddProductToInvoice: (
-    product: Components.Schemas.Product,
+    product: DomainProduct,
     quantity: number
   ) => void
   handleRemoveLine: (productId: number) => void

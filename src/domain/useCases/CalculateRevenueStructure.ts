@@ -1,4 +1,4 @@
-import { Invoice } from '../../types';
+import { DomainInvoice } from '../types';
 import { InvoiceEntity } from '../entities';
 
 export interface RevenueStructureData {
@@ -8,7 +8,7 @@ export interface RevenueStructureData {
 }
 
 export class CalculateRevenueStructure {
-  execute(invoices: Invoice[]): RevenueStructureData {
+  execute(invoices: DomainInvoice[]): RevenueStructureData {
     const byClient: { [key: number]: { name: string; revenue: number } } = {};
     const byProduct: { [key: number]: { label: string; revenue: number } } = {};
     const byVatRate: { [key: string]: number } = {};

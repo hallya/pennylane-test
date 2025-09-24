@@ -1,10 +1,10 @@
 import { faker } from '@faker-js/faker';
-import { Customer } from '../../../types';
+import { DomainCustomer } from '../../types';
 
 faker.seed(123);
 
 export class CustomerTestDataFactory {
-  static create(overrides: Partial<Customer> = {}): Customer {
+  static create(overrides: Partial<DomainCustomer> = {}): DomainCustomer {
     return {
       id: faker.number.int({ min: 1, max: 1000 }),
       first_name: faker.person.firstName(),

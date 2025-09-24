@@ -1,4 +1,4 @@
-import { Invoice } from '../../types';
+import { DomainInvoice } from '../types';
 import { InvoiceEntity } from '../entities';
 
 export interface DeadlineData {
@@ -7,7 +7,7 @@ export interface DeadlineData {
 }
 
 export class CalculateDeadlineCompliance {
-  execute(invoices: Invoice[]): DeadlineData {
+  execute(invoices: DomainInvoice[]): DeadlineData {
     const invoiceEntities = invoices.map(inv => new InvoiceEntity(inv));
     const dueSoon: InvoiceEntity[] = [];
     const overdue: InvoiceEntity[] = [];

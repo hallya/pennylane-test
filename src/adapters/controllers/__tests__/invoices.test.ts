@@ -6,12 +6,12 @@ import { useGetInvoice } from '../invoices/useGetInvoice'
 import { useInvoices } from '../invoices/useInvoices'
 import { InvoiceEntity } from '../../../domain/entities'
 import { AxiosError } from 'openapi-client-axios'
-import { useApi } from '../../../api'
+import { useApi } from '../../../infrastructure/api'
 import { useToast } from '../../../infrastructure/components/hooks/useToast'
 import { InvoiceGatewayImpl } from '../../gateways'
 import { InvoiceTestDataFactory } from '../../../domain/__tests__/utils'
 
-vi.mock('../../../api', () => ({
+vi.mock('../../../infrastructure/api', () => ({
   useApi: vi.fn(),
 }))
 

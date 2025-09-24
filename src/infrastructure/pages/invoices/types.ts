@@ -1,6 +1,5 @@
-import { Components } from '../../../api/gen/client'
-
 export type InvoiceLineData = {
+  id?: number
   product_id: number
   quantity?: number
   label?: string
@@ -17,7 +16,7 @@ export type InvoiceFormData = {
   date?: string
   deadline?: string
   customerName: string
-  invoiceLines: Map<number, Components.Schemas.InvoiceLineCreatePayload & { id?: number }>
+  invoiceLines: Map<number, InvoiceLineData>
   quantity: number
 }
 

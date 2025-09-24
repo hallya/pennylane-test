@@ -1,5 +1,5 @@
-import { Components } from '../../api/gen/client';
+import { DomainCustomer } from '../types';
 
 export interface CustomerGateway {
-  searchCustomers(query: string): Promise<Components.Schemas.Customer[]>;
+  searchCustomers(query: string): Promise<DomainCustomer[]>;
 }

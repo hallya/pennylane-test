@@ -8,9 +8,13 @@ import {
   useSearchProducts,
 } from '../../../adapters/controllers'
 import { useDebouncedSearch, useFormManager } from './index'
-import { Components } from '../../../api/gen/client'
 import { ValidationMode, InvoiceFormData } from '../../pages/invoices/types'
 import { INVOICE_FORM_CONSTANTS } from '../../../domain/constants'
+import {
+  DomainCustomer,
+  DomainInvoiceUpdatePayload,
+  DomainProduct,
+} from '../../../domain/types'
 
 type InvoiceFormMode = 'create' | 'edit'
 
@@ -26,9 +30,10 @@ export function useInvoiceForm(
   )
 
   const [selectedCustomer, setSelectedCustomer] =
-    useState<Components.Schemas.Customer | null>(null)
-  const [selectedProduct, setSelectedProduct] =
-    useState<Components.Schemas.Product | null>(null)
+    useState<DomainCustomer | null>(null)
+  const [selectedProduct, setSelectedProduct] = useState<DomainProduct | null>(
+    null
+  )
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [showProducts, setShowProducts] = useState(false)
 
@@ -106,7 +111,7 @@ export function useInvoiceForm(
     }
   }
 
-  const handleCustomerSelect = (customer: Components.Schemas.Customer) => {
+  const handleCustomerSelect = (customer: DomainCustomer) => {
     setSelectedCustomer(customer)
     form.setValue(
       'customerName',
@@ -130,7 +135,7 @@ export function useInvoiceForm(
   }
 
   const handleAddProductToInvoice = (
-    product: Components.Schemas.Product,
+    product: DomainProduct,
     quantity: number
   ) => {
     const currentLines = form.watch('invoiceLines')
@@ -181,15 +186,9 @@ export function useInvoiceForm(
     if (mode === 'create') {
       await createInvoice(basePayload)
     } else if (mode === 'edit' && invoiceId) {
-      const payload: Components.Schemas.InvoiceUpdatePayload = {
+      const payload: DomainInvoiceUpdatePayload = {
         id: invoiceId,
         ...basePayload,
-        invoice_lines_attributes: basePayload.invoice_lines_attributes.map(
-          (line) => ({
-            ...line,
-            id: line.id,
-          })
-        ),
       }
       await updateInvoice(invoiceId, payload)
     }

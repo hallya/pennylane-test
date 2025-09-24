@@ -12,12 +12,12 @@ import { INVOICE_FORM_CONSTANTS } from '../../../domain/constants'
 
 type InvoiceFormMode = 'create' | 'edit'
 
-export function useInvoiceForm(mode: InvoiceFormMode, invoiceId?: number) {
+export function useInvoiceForm(mode: InvoiceFormMode, invoiceId: number | null = null) {
   const navigate = useNavigate()
   const { createInvoice } = useCreateInvoice()
   const { updateInvoice } = useUpdateInvoice()
   const { data: invoiceData, loading: invoiceLoading } = useGetInvoice(
-    mode === 'edit' ? invoiceId || null : null
+    mode === 'edit' ? invoiceId : null
   )
 
   const [selectedCustomer, setSelectedCustomer] =

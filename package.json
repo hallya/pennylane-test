@@ -58,7 +58,7 @@
     ]
   },
   "devDependencies": {
-    "@eslint/js": "^9.36.0",
+    "@eslint/js": "^8.57.0",
     "@eslint/json": "^0.13.2",
     "@faker-js/faker": "8",
     "@redocly/openapi-cli": "1.0.0-beta.95",
@@ -73,12 +73,12 @@
     "@types/react-dom": "18.2.7",
     "@types/react-router-dom": "5.3.3",
     "@types/react-table": "7.7.14",
-    "@typescript-eslint/eslint-plugin": "^8.44.1",
-    "@typescript-eslint/parser": "^8.44.1",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
     "@vitest/ui": "^3.2.4",
-    "eslint": "^9.36.0",
+    "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.37.5",
-    "globals": "^16.4.0",
+    "globals": "^15.9.0",
     "husky": "^9.1.7",
     "jiti": "^2.6.0",
     "jsdom": "^27.0.0",
@@ -88,7 +88,7 @@
     "react-scripts": "5.0.1",
     "ts-morph": "^27.0.0",
     "typescript": "5.9.2",
-    "typescript-eslint": "^8.44.1",
+    "typescript-eslint": "^7.18.0",
     "vitest": "3.2.4"
   }
 }

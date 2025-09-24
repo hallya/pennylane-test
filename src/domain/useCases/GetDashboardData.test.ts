@@ -9,7 +9,6 @@ import { InvoiceTestDataFactory } from '../__tests__/utils/invoiceTestDataFactor
 
 const mockInvoiceGateway: Mocked<InvoiceGateway> = {
   getAllInvoices: vi.fn(),
-  getFinalizedInvoices: vi.fn(),
   getInvoice: vi.fn(),
   createInvoice: vi.fn(),
   updateInvoice: vi.fn(),
@@ -64,7 +63,7 @@ describe('GetDashboardData', () => {
   beforeEach(() => {
     vi.clearAllMocks()
 
-    mockInvoiceGateway.getFinalizedInvoices.mockResolvedValue(mockPaginatedInvoices)
+    mockInvoiceGateway.getAllInvoices.mockResolvedValue(mockPaginatedInvoices)
     mockCalculateCashFlow.execute.mockReturnValue(mockCashFlowData)
     mockCalculateDeadlineCompliance.execute.mockReturnValue(mockDeadlineData)
     mockCalculateClientReliability.execute.mockReturnValue(
@@ -83,9 +82,9 @@ describe('GetDashboardData', () => {
     )
   })
 
-  it('should call getFinalizedInvoices on the gateway', async () => {
+  it('should call getAllInvoices on the gateway with finalized filter', async () => {
     await useCase.execute()
-    expect(mockInvoiceGateway.getFinalizedInvoices).toHaveBeenCalledTimes(1)
+    expect(mockInvoiceGateway.getAllInvoices).toHaveBeenCalledWith(1, 50, { finalized: true })
   })
 
   it('should call all calculate use cases with the invoices', async () => {
@@ -115,7 +114,7 @@ describe('GetDashboardData', () => {
 
   it('should handle gateway errors', async () => {
    const error = new Error('Gateway error')
-   mockInvoiceGateway.getFinalizedInvoices.mockRejectedValue(error)
+   mockInvoiceGateway.getAllInvoices.mockRejectedValue(error)
 
    await expect(useCase.execute()).rejects.toThrow('Gateway error')
  })
@@ -132,7 +131,7 @@ describe('GetDashboardData', () => {
   it('should call use cases in correct order', async () => {
     const callOrder: string[] = []
 
-    mockInvoiceGateway.getFinalizedInvoices.mockImplementation(async () => {
+    mockInvoiceGateway.getAllInvoices.mockImplementation(async () => {
       callOrder.push('gateway')
       return mockPaginatedInvoices
     })

@@ -2,40 +2,73 @@ import { InvoiceGateway } from '../../domain/useCases';
 import { Invoice, PaginatedInvoices } from '../../types';
 import { Client, Components } from '../../api/gen/client';
 
+import { FilterItem, InvoiceFilters } from '../../domain/useCases/InvoiceGateway';
+
+type FilterMapping = {
+  key: keyof InvoiceFilters;
+  field: string;
+  operator: string;
+  customHandler?: (value: unknown) => FilterItem[];
+};
+
 export class InvoiceGatewayImpl implements InvoiceGateway {
   constructor(private api: Client) {}
 
-  async getAllInvoices(page?: number, perPage?: number, customerId?: number): Promise<PaginatedInvoices> {
+  private readonly filterMappings: FilterMapping[] = [
+    { key: 'id', field: 'id', operator: 'eq' },
+    { key: 'customerId', field: 'customer_id', operator: 'eq' },
+    { key: 'finalized', field: 'finalized', operator: 'eq' },
+    { key: 'paid', field: 'paid', operator: 'eq' },
+    { key: 'date', field: 'date', operator: 'eq' },
+    { key: 'dateFrom', field: 'date', operator: 'gteq' },
+    { key: 'dateTo', field: 'date', operator: 'lteq' },
+    { key: 'deadline', field: 'deadline', operator: 'eq' },
+    { key: 'deadlineFrom', field: 'deadline', operator: 'gteq' },
+    { key: 'deadlineTo', field: 'deadline', operator: 'lteq' },
+    {
+      key: 'year',
+      field: '',
+      operator: '',
+      customHandler: (year: unknown) => [
+        { field: 'date', operator: 'gteq', value: `${year as number}-01-01` },
+        { field: 'date', operator: 'lteq', value: `${year as number}-12-31` },
+      ],
+    },
+  ];
+
+  private convertFiltersToFilterItems(filters: InvoiceFilters): FilterItem[] {
+    const items: FilterItem[] = [];
+
+    for (const mapping of this.filterMappings) {
+      const value = filters[mapping.key];
+      if (value !== undefined) {
+        if (mapping.customHandler) {
+          items.push(...mapping.customHandler(value));
+        } else {
+          items.push({ field: mapping.field, operator: mapping.operator, value });
+        }
+      }
+    }
+
+    return items;
+  }
+
+  async getAllInvoices(page?: number, perPage?: number, filters?: InvoiceFilters): Promise<PaginatedInvoices> {
     const params: Record<string, unknown> = {};
     if (page !== undefined) params.page = page;
     if (perPage !== undefined) params.per_page = perPage;
 
-    if (customerId !== undefined) {
-      params.filter = JSON.stringify([{
-        field: 'customer_id',
-        operator: 'eq',
-        value: customerId
-      }]);
+    if (filters) {
+      const filterItems = this.convertFiltersToFilterItems(filters);
+      if (filterItems.length > 0) {
+        params.filter = JSON.stringify(filterItems);
+      }
     }
 
     const { data } = await this.api.getInvoices(params);
     return data;
   }
 
-  async getFinalizedInvoices(page?: number, perPage?: number): Promise<PaginatedInvoices> {
-    const params: Record<string, unknown> = {};
-    if (page !== undefined) params.page = page;
-    if (perPage !== undefined) params.per_page = perPage;
-
-    params.filter = JSON.stringify([{
-      field: 'finalized',
-      operator: 'eq',
-      value: true
-    }]);
-
-    const { data } = await this.api.getInvoices(params);
-    return data;
-  }
 
   async getInvoice(id: number): Promise<Invoice> {
     const { data } = await this.api.getInvoice(id);

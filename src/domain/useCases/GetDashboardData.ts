@@ -1,4 +1,4 @@
-import { InvoiceGateway } from './InvoiceGateway';
+import { InvoiceGateway, InvoiceFilters } from './InvoiceGateway';
 import { CalculateCashFlow, CashFlowData } from './CalculateCashFlow';
 import { CalculateDeadlineCompliance, DeadlineData } from './CalculateDeadlineCompliance';
 import { CalculateClientReliability, ClientReliabilityData } from './CalculateClientReliability';
@@ -20,8 +20,15 @@ export class GetDashboardData {
     private calculateRevenueStructure: CalculateRevenueStructure
   ) {}
 
-  async execute(): Promise<DashboardData> {
-    const result = await this.invoiceGateway.getFinalizedInvoices(1, 50);
+  async execute(year?: number): Promise<DashboardData> {
+    const filters: InvoiceFilters = {
+      finalized: true,
+    };
+    if (year !== undefined) {
+      filters.year = year;
+    }
+
+    const result = await this.invoiceGateway.getAllInvoices(1, 50, filters);
     const invoices = result.invoices;
 
     return {

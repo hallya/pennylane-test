@@ -5,6 +5,7 @@ import { InvoiceEntity } from '../../../domain/entities'
 import { Pagination } from '../../../infrastructure/api/types'
 import { useToast } from '../../../infrastructure/components/hooks/useToast'
 import { AxiosError } from 'openapi-client-axios'
+import { InvoiceFilters } from '../../../domain/useCases/InvoiceGateway'
 
 interface UseInvoicesParams {
   page?: number
@@ -40,7 +41,11 @@ export const useInvoices = ({
       setLoading(true)
       setError(null)
       const gateway = new InvoiceGatewayImpl(api)
-      const result = await gateway.getAllInvoices(page, perPage, customerId)
+      const filters: InvoiceFilters = {}
+      if (customerId !== undefined) {
+        filters.customerId = customerId
+      }
+      const result = await gateway.getAllInvoices(page, perPage, filters)
       const invoiceEntities = result.invoices.map(
         (invoice) => new InvoiceEntity(invoice)
       )

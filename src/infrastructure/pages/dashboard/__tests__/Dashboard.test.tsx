@@ -2,9 +2,14 @@ import { render, screen } from '@testing-library/react'
 import Dashboard from '../Dashboard'
 import { DashboardTestDataFactory } from '../../../__tests__/utils/dashboardTestDataFactory'
 import { useDashboard } from '../../../../adapters/controllers'
+import { useDashboardSearchParams } from '../../../../adapters/controllers/dashboard'
 
 vi.mock('../../../../adapters/controllers', () => ({
   useDashboard: vi.fn(),
+}))
+
+vi.mock('../../../../adapters/controllers/dashboard', () => ({
+  useDashboardSearchParams: vi.fn(),
 }))
 
 vi.mock('../DashboardLoading', () => ({
@@ -43,6 +48,14 @@ vi.mock('../../../components', () => ({
 describe('Dashboard', () => {
   beforeEach(() => {
     vi.mocked(useDashboard).mockImplementation(vi.fn())
+    vi.mocked(useDashboardSearchParams).mockReturnValue({
+      deadlineComplianceDays: 7,
+      setDeadlineComplianceDays: vi.fn(),
+      year: 2023,
+      setYear: vi.fn(),
+      getParams: { deadlineComplianceDays: 7, year: 2023 },
+      setParams: vi.fn(),
+    })
     vi.clearAllMocks()
   })
 

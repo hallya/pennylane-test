@@ -15,15 +15,17 @@ describe('InvoiceGatewayImpl', () => {
     }
   })
 
+  const createMockResponse = (invoice: any) => ({
+    data: {
+      invoices: [invoice],
+      pagination: { page: 1, page_size: 25, total_pages: 1, total_entries: 1 },
+    },
+  })
+
   describe('getAllInvoices', () => {
     it('should get all invoices', async () => {
       const mockInvoice = InvoiceTestDataFactory.create({ id: 1 })
-      const mockResponse = {
-        data: {
-          invoices: [mockInvoice],
-          pagination: { page: 1, page_size: 25, total_pages: 1, total_entries: 1 },
-        },
-      }
+      const mockResponse = createMockResponse(mockInvoice)
       mockApi.getInvoices.mockResolvedValue(mockResponse)
 
       const gateway = new InvoiceGatewayImpl(mockApi)
@@ -37,31 +39,89 @@ describe('InvoiceGatewayImpl', () => {
       })
     })
 
-    it('should get invoices with customer filter', async () => {
-      const mockInvoice = InvoiceTestDataFactory.create({ id: 1 })
-      const mockResponse = {
-        data: {
-          invoices: [mockInvoice],
-          pagination: { page: 1, page_size: 25, total_pages: 1, total_entries: 1 },
-        },
+    it.each([
+      [
+        'customerId',
+        { customerId: 123 },
+        [{ field: 'customer_id', operator: 'eq', value: 123 }],
+      ],
+      ['id', { id: 456 }, [{ field: 'id', operator: 'eq', value: 456 }]],
+      [
+        'paid',
+        { paid: false },
+        [{ field: 'paid', operator: 'eq', value: false }],
+      ],
+      [
+        'date',
+        { date: '2023-05-15' },
+        [{ field: 'date', operator: 'eq', value: '2023-05-15' }],
+      ],
+      [
+        'dateFrom',
+        { dateFrom: '2023-01-01' },
+        [{ field: 'date', operator: 'gteq', value: '2023-01-01' }],
+      ],
+      [
+        'dateTo',
+        { dateTo: '2023-12-31' },
+        [{ field: 'date', operator: 'lteq', value: '2023-12-31' }],
+      ],
+      [
+        'deadline',
+        { deadline: '2023-06-15' },
+        [{ field: 'deadline', operator: 'eq', value: '2023-06-15' }],
+      ],
+      [
+        'deadlineFrom',
+        { deadlineFrom: '2023-01-01' },
+        [{ field: 'deadline', operator: 'gteq', value: '2023-01-01' }],
+      ],
+      [
+        'deadlineTo',
+        { deadlineTo: '2023-12-31' },
+        [{ field: 'deadline', operator: 'lteq', value: '2023-12-31' }],
+      ],
+      [
+        'finalized',
+        { finalized: true },
+        [{ field: 'finalized', operator: 'eq', value: true }],
+      ],
+      [
+        'year',
+        { year: 2023 },
+        [
+          { field: 'date', operator: 'gteq', value: '2023-01-01' },
+          { field: 'date', operator: 'lteq', value: '2023-12-31' },
+        ],
+      ],
+      [
+        'multiple',
+        { customerId: 123, finalized: true, paid: false },
+        [
+          { field: 'customer_id', operator: 'eq', value: 123 },
+          { field: 'finalized', operator: 'eq', value: true },
+          { field: 'paid', operator: 'eq', value: false },
+        ],
+      ],
+    ])(
+      'should get invoices with %s filter',
+      async (filterName, filterParams, expectedFilter) => {
+        const mockInvoice = InvoiceTestDataFactory.create({ id: 1 })
+        const mockResponse = createMockResponse(mockInvoice)
+        mockApi.getInvoices.mockResolvedValue(mockResponse)
+
+        const gateway = new InvoiceGatewayImpl(mockApi)
+
+        const result = await gateway.getAllInvoices(1, 25, filterParams)
+
+        expect(result).toEqual(mockResponse.data)
+        expect(mockApi.getInvoices).toHaveBeenCalledWith({
+          page: 1,
+          per_page: 25,
+          filter: JSON.stringify(expectedFilter),
+        })
       }
-      mockApi.getInvoices.mockResolvedValue(mockResponse)
-
-      const gateway = new InvoiceGatewayImpl(mockApi)
-
-      const result = await gateway.getAllInvoices(1, 25, 123)
-
-      expect(result).toEqual(mockResponse.data)
-      expect(mockApi.getInvoices).toHaveBeenCalledWith({
-        page: 1,
-        per_page: 25,
-        filter: JSON.stringify([{
-          field: 'customer_id',
-          operator: 'eq',
-          value: 123,
-        }]),
-      })
-    })
+    )
 
     it('should handle API error', async () => {
       const error = new Error('API error')
@@ -70,34 +130,6 @@ describe('InvoiceGatewayImpl', () => {
       const gateway = new InvoiceGatewayImpl(mockApi)
 
       await expect(gateway.getAllInvoices()).rejects.toThrow('API error')
-    })
-  })
-
-  describe('getFinalizedInvoices', () => {
-    it('should get finalized invoices', async () => {
-      const mockInvoice = InvoiceTestDataFactory.create({ id: 1, finalized: true })
-      const mockResponse = {
-        data: {
-          invoices: [mockInvoice],
-          pagination: { page: 1, page_size: 25, total_pages: 1, total_entries: 1 },
-        },
-      }
-      mockApi.getInvoices.mockResolvedValue(mockResponse)
-
-      const gateway = new InvoiceGatewayImpl(mockApi)
-
-      const result = await gateway.getFinalizedInvoices(1, 25)
-
-      expect(result).toEqual(mockResponse.data)
-      expect(mockApi.getInvoices).toHaveBeenCalledWith({
-        page: 1,
-        per_page: 25,
-        filter: JSON.stringify([{
-          field: 'finalized',
-          operator: 'eq',
-          value: true,
-        }]),
-      })
     })
   })
 
@@ -137,7 +169,9 @@ describe('InvoiceGatewayImpl', () => {
       const result = await gateway.createInvoice(payload)
 
       expect(result).toEqual(mockResponse.data)
-      expect(mockApi.postInvoices).toHaveBeenCalledWith(null, { invoice: payload })
+      expect(mockApi.postInvoices).toHaveBeenCalledWith(null, {
+        invoice: payload,
+      })
     })
 
     it('should handle API error', async () => {
@@ -173,7 +207,9 @@ describe('InvoiceGatewayImpl', () => {
 
       const gateway = new InvoiceGatewayImpl(mockApi)
 
-      await expect(gateway.updateInvoice(1, payload)).rejects.toThrow('API error')
+      await expect(gateway.updateInvoice(1, payload)).rejects.toThrow(
+        'API error'
+      )
     })
   })
 

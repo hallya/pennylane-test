@@ -1,4 +1,5 @@
 import { useDashboard } from '../../../adapters/controllers'
+import { useDashboardSearchParams } from '../../../adapters/controllers/dashboard'
 import {
   CashFlowWidget,
   DeadlineWidget,
@@ -9,6 +10,7 @@ import { DashboardLoading, DashboardError, DashboardEmpty } from './index'
 
 const Dashboard: React.FC = () => {
   const { data, loading, error } = useDashboard()
+  const { year, setYear } = useDashboardSearchParams()
 
   if (loading) return <DashboardLoading />
   if (error) return <DashboardError error={error} />
@@ -33,8 +35,24 @@ const Dashboard: React.FC = () => {
         Aller au contenu principal
       </a>
       <main className="container-fluid mt-4" role="main">
-        <header>
-          <h1 className="mb-3" id="dashboard-title">Dashboard Financier</h1>
+        <header className="d-flex justify-content-between align-items-center mb-3">
+          <h1 id="dashboard-title">Dashboard Financier</h1>
+          <div className="form-group">
+            <label htmlFor="year-select" className="form-label">Année</label>
+            <select
+              id="year-select"
+              className="form-select"
+              value={year}
+              onChange={(e) => setYear(parseInt(e.target.value, 10))}
+              style={{ width: 'auto' }}
+            >
+              {Array.from({ length: 11 }, (_, i) => 2020 + i).map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
+          </div>
         </header>
 
       <div

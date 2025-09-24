@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useApi } from '../../../api'
 import { InvoiceGatewayImpl } from '../../gateways'
 import {
@@ -11,21 +11,21 @@ import {
 } from '../../../domain/useCases'
 import { useToast } from '../../../infrastructure/components/hooks/useToast'
 import { AxiosError } from 'openapi-client-axios'
+import { useDashboardSearchParams } from './useDashboardSearchParams'
 
 export const useDashboard = () => {
   const api = useApi()
   const { showToast } = useToast()
+  const { year } = useDashboardSearchParams()
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const hasFetchedRef = useRef(false);
 
   const fetchDashboardData = useCallback(
-    async () => {
-      if (hasFetchedRef.current) return;
-      hasFetchedRef.current = true;
+    async (currentYear: number) => {
       try {
         setLoading(true)
+        setError(null)
         const gateway = new InvoiceGatewayImpl(api)
         const useCase = new GetDashboardData(
           gateway,
@@ -34,7 +34,7 @@ export const useDashboard = () => {
           new CalculateClientReliability(),
           new CalculateRevenueStructure()
         )
-        const result = await useCase.execute()
+        const result = await useCase.execute(currentYear)
         setData(result)
       } catch (err) {
         const errorMessage =
@@ -43,7 +43,6 @@ export const useDashboard = () => {
           setError(errorMessage)
           showToast(errorMessage, 'error')
         }
-        hasFetchedRef.current = false;
       } finally {
         setLoading(false)
       }
@@ -52,8 +51,8 @@ export const useDashboard = () => {
   )
 
   useEffect(() => {
-    fetchDashboardData();
-  }, [fetchDashboardData])
+    fetchDashboardData(year);
+  }, [fetchDashboardData, year])
 
   return { data, loading, error }
 }

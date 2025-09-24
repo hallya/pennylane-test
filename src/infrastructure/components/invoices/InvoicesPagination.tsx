@@ -20,16 +20,21 @@ const InvoicesPagination: React.FC<InvoicesPaginationProps> = ({
         <Pagination.First
           disabled={currentPage === 1}
           onClick={() => onPageChange(1)}
+          aria-disabled={currentPage === 1}
+          aria-label="First"
         />
         <Pagination.Prev
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
+          aria-disabled={currentPage === 1}
+          aria-label="Previous"
         />
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
           <Pagination.Item
             key={page}
             active={page === currentPage}
             onClick={() => onPageChange(page)}
+            aria-current={page === currentPage ? 'page' : undefined}
           >
             {page}
           </Pagination.Item>
@@ -37,10 +42,14 @@ const InvoicesPagination: React.FC<InvoicesPaginationProps> = ({
         <Pagination.Next
           disabled={currentPage === totalPages}
           onClick={() => onPageChange(currentPage + 1)}
+          aria-disabled={currentPage === totalPages}
+          aria-label="Next"
         />
         <Pagination.Last
           disabled={currentPage === totalPages}
           onClick={() => onPageChange(totalPages)}
+          aria-disabled={currentPage === totalPages}
+          aria-label="Last"
         />
       </Pagination>
     </div>
